@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { AnimatedShinyText } from "@/components/magicui/animated-shiny-text";
-import { Cable, ShieldCheck, Zap } from "lucide-react";
+import { ArrowRight, Cable, ShieldCheck, Zap } from "lucide-react";
 
 export default function Home() {
   return (
@@ -38,7 +38,11 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="z-10 w-full overflow-hidden flex flex-col justify-center items-center -mt-70 pb-10 relative">
+
+      <div className="z-9 w-full overflow-hidden flex flex-col justify-center items-center -mt-70 pb-10 relative rounded-b-4xl">
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 -z-10  w-full [background:radial-gradient(125%_125%_at_50%_10%,#01010e_40%,#001224_100%)] rounded-b-xl"></div>
+        </div>
         <Image
           src="/hero.png"
           alt=""
@@ -74,6 +78,218 @@ export default function Home() {
               Reduce IT support tickets and improve productivity for end users
               with best-in-class speed, reliability, and user experience.
             </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="w-full h-full py-20">
+        <h1 className="text-white text-5xl font-regular text-center mb-10">
+          Multitude of Tools
+        </h1>
+        <div className="flex flex-col gap-10">
+          <div className="flex flex-col gap-4 max-w-[75%] mx-auto">
+            <div className="h-full w-full border-1 border-white/10   rounded-2xl grid grid-cols-2">
+              <div className="flex flex-col py-4 px-8">
+                <h3 className="font-bold mb-8 text-xl text-blue-300">
+                  Predictive Pulse AI
+                </h3>
+                <h1 className="text-white text-4xl font-regular mb-4">
+                  Get trading signals and insights with AI-powered chart
+                  analysis.
+                </h1>
+                <button className="bg-white text-black px-2 py-1 rounded-full font-regular w-1/4 mt-4 flex items-center justify-center gap-2">
+                  Try Now <ArrowRight className="w-4 h-4" />
+                </button>
+                <div className="grid grid-cols-2 gap-0 mt-8">
+                  {[
+                    {
+                      title: "Real-time Analysis",
+                      description:
+                        "Get instant market insights and trading signals powered by advanced AI algorithms.",
+                      icon: <Zap className="w-5 h-5" />,
+                    },
+                    {
+                      title: "Smart Predictions",
+                      description:
+                        "AI-driven price predictions and trend analysis for informed decision making.",
+                      icon: <ShieldCheck className="w-5 h-5" />,
+                    },
+                    {
+                      title: "Risk Management",
+                      description:
+                        "Advanced risk assessment tools to protect your investments and optimize returns.",
+                      icon: <Cable className="w-5 h-5" />,
+                    },
+                    {
+                      title: "Portfolio Tracking",
+                      description:
+                        "Monitor your investments and track performance with real-time updates.",
+                      icon: <ArrowRight className="w-5 h-5" />,
+                    },
+                  ].map((feature, index) => (
+                    <div
+                      key={feature.title}
+                      className={`flex flex-col border-neutral-800 py-6 relative group/feature ${
+                        index % 2 === 0 ? "border-r" : ""
+                      } ${index < 2 ? "border-b" : ""}`}
+                    >
+                      <div className="opacity-0 group-hover/feature:opacity-100 transition duration-200 absolute inset-0 h-full w-full bg-gradient-to-t from-neutral-800 to-transparent pointer-events-none" />
+                      <div className="mb-4 relative z-10 px-6 text-neutral-400">
+                        {feature.icon}
+                      </div>
+                      <div className="text-lg font-bold mb-2 relative z-10 px-6">
+                        <div className="absolute left-0 inset-y-0 h-6 group-hover/feature:h-8 w-1 rounded-tr-full rounded-br-full bg-neutral-700 group-hover/feature:bg-blue-500 transition-all duration-200 origin-center" />
+                        <span className="group-hover/feature:translate-x-2 transition duration-200 inline-block text-neutral-100 text-sm">
+                          {feature.title}
+                        </span>
+                      </div>
+                      <p className="text-xs text-neutral-300 max-w-xs relative z-10 px-6">
+                        {feature.description}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="flex justify-center items-center p-4">
+                <div className="group bg-gradient-to-t from-[#05070a] to-[#0b1a3b] h-full w-full hover:from-[#05070a] hover:to-[#0b1a3b] relative before:absolute before:inset-0 before:bg-[url('/noise.gif')] before:opacity-5 rounded-2xl border border-white/10"></div>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col gap-4 max-w-[75%] mx-auto">
+            <div className="h-full w-full border-1 border-white/10   rounded-2xl grid grid-cols-2">
+              <div className="flex flex-col py-4 px-8">
+                <h3 className="font-bold mb-8 text-xl text-red-300">
+                  Aegis Rug-Pull Shield
+                </h3>
+                <h1 className="text-white text-4xl font-regular mb-4">
+                  Identify and avoid rug pulls with our advanced early warning
+                  system
+                </h1>
+                <button className="bg-white text-black px-2 py-1 rounded-full font-regular w-1/4 mt-4 flex items-center justify-center gap-2">
+                  Try Now <ArrowRight className="w-4 h-4" />
+                </button>
+                <div className="grid grid-cols-2 gap-0 mt-8">
+                  {[
+                    {
+                      title: "Early Warning System",
+                      description:
+                        "Receive alerts before potential rug pulls to protect your investments.",
+                      icon: <Zap className="w-5 h-5" />,
+                    },
+                    {
+                      title: "Holder Distribution",
+                      description:
+                        "Checks for high concentration of supply in a few wallets (potential dump risk).",
+                      icon: <ShieldCheck className="w-5 h-5" />,
+                    },
+                    {
+                      title: "Contract Veracity",
+                      description:
+                        "Is the contract verified? Does it contain malicious functions like a honeypot or blacklisting?",
+                      icon: <Cable className="w-5 h-5" />,
+                    },
+                    {
+                      title: "Liquidity Status",
+                      description:
+                        "Is it locked? Is it burned? What percentage of the supply is in the LP?",
+                      icon: <ArrowRight className="w-5 h-5" />,
+                    },
+                  ].map((feature, index) => (
+                    <div
+                      key={feature.title}
+                      className={`flex flex-col border-neutral-800 py-6 relative group/feature ${
+                        index % 2 === 0 ? "border-r" : ""
+                      } ${index < 2 ? "border-b" : ""}`}
+                    >
+                      <div className="opacity-0 group-hover/feature:opacity-100 transition duration-200 absolute inset-0 h-full w-full bg-gradient-to-t from-neutral-800 to-transparent pointer-events-none" />
+                      <div className="mb-4 relative z-10 px-6 text-neutral-400">
+                        {feature.icon}
+                      </div>
+                      <div className="text-lg font-bold mb-2 relative z-10 px-6">
+                        <div className="absolute left-0 inset-y-0 h-6 group-hover/feature:h-8 w-1 rounded-tr-full rounded-br-full bg-neutral-700 group-hover/feature:bg-blue-500 transition-all duration-200 origin-center" />
+                        <span className="group-hover/feature:translate-x-2 transition duration-200 inline-block text-neutral-100 text-sm">
+                          {feature.title}
+                        </span>
+                      </div>
+                      <p className="text-xs text-neutral-300 max-w-xs relative z-10 px-6">
+                        {feature.description}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="flex justify-center items-center p-4">
+                <div className="group bg-gradient-to-t from-[#141414] to-[#2b131e] h-full w-full hover:from-[#141414] hover:to-[#2b131e] relative before:absolute before:inset-0 before:bg-[url('/noise.gif')] before:opacity-5 rounded-2xl border border-white/10"></div>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col gap-4 max-w-[75%] mx-auto">
+            <div className="h-full w-full border-1 border-white/10   rounded-2xl grid grid-cols-2">
+              <div className="flex flex-col py-4 px-8">
+                <h3 className="font-bold mb-8 text-xl text-emerald-300">
+                  The Vault
+                </h3>
+                <h1 className="text-white text-4xl font-regular mb-4">
+                  Track your portfolio and get detailed insights on your
+                  investments
+                </h1>
+                <button className="bg-white text-black px-2 py-1 rounded-full font-regular w-1/4 mt-4 flex items-center justify-center gap-2">
+                  Try Now <ArrowRight className="w-4 h-4" />
+                </button>
+                <div className="grid grid-cols-2 gap-0 mt-8">
+                  {[
+                    {
+                      title: "Unified Dashboard",
+                      description:
+                        "See your total portfolio value, 24-hour profit & loss (PnL), and historical performance.",
+                      icon: <Zap className="w-5 h-5" />,
+                    },
+                    {
+                      title: "Token Breakdown",
+                      description:
+                        "Detailed breakdowns of your tokens, including quantity, average cost, and current market value.",
+                      icon: <ShieldCheck className="w-5 h-5" />,
+                    },
+                    {
+                      title: "PnL Tracking",
+                      description:
+                        "Profit and loss tracking for each token in your portfolio.",
+                      icon: <ArrowRight className="w-5 h-5" />,
+                    },
+                    {
+                      title: "AI Insights",
+                      description:
+                        "Get AI-powered insights on your portfolio, including risk analysis and potential opportunities.",
+                      icon: <Cable className="w-5 h-5" />,
+                    },
+                  ].map((feature, index) => (
+                    <div
+                      key={feature.title}
+                      className={`flex flex-col border-neutral-800 py-6 relative group/feature ${
+                        index % 2 === 0 ? "border-r" : ""
+                      } ${index < 2 ? "border-b" : ""}`}
+                    >
+                      <div className="opacity-0 group-hover/feature:opacity-100 transition duration-200 absolute inset-0 h-full w-full bg-gradient-to-t from-neutral-800 to-transparent pointer-events-none" />
+                      <div className="mb-4 relative z-10 px-6 text-neutral-400">
+                        {feature.icon}
+                      </div>
+                      <div className="text-lg font-bold mb-2 relative z-10 px-6">
+                        <div className="absolute left-0 inset-y-0 h-6 group-hover/feature:h-8 w-1 rounded-tr-full rounded-br-full bg-neutral-700 group-hover/feature:bg-blue-500 transition-all duration-200 origin-center" />
+                        <span className="group-hover/feature:translate-x-2 transition duration-200 inline-block text-neutral-100 text-sm">
+                          {feature.title}
+                        </span>
+                      </div>
+                      <p className="text-xs text-neutral-300 max-w-xs relative z-10 px-6">
+                        {feature.description}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="flex justify-center items-center p-4">
+                <div className="group bg-gradient-to-t from-[#080808] to-emerald-900 h-full w-full hover:from-[#080808] hover:to-emerald-900 relative before:absolute before:inset-0 before:bg-[url('/noise.gif')] before:opacity-5 rounded-2xl border border-white/10"></div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
