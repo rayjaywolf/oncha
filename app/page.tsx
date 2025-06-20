@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { AnimatedShinyText } from "@/components/magicui/animated-shiny-text";
+import HeroVideoDialog from "@/components/magicui/hero-video-dialog";
 import { ArrowRight, Cable, ShieldCheck, Zap } from "lucide-react";
 
 export default function Home() {
@@ -40,9 +41,6 @@ export default function Home() {
       </div>
 
       <div className="z-9 w-full overflow-hidden flex flex-col justify-center items-center -mt-70 pb-10 relative rounded-b-4xl">
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 -z-10  w-full [background:radial-gradient(125%_125%_at_50%_10%,#01010e_40%,#001224_100%)] rounded-b-xl"></div>
-        </div>
         <Image
           src="/hero.png"
           alt=""
@@ -294,59 +292,16 @@ export default function Home() {
         </div>
       </div>
 
-      {/* <section className="grid md:grid-cols-3 gap-6 max-w-[70%] max-md:max-w-xs mx-auto px-4 pb-10 ">
-        <div className="group bg-gradient-to-t from-[#242424] to-[#020202] h-80 hover:from-[#182135] hover:to-[#080808] relative before:absolute before:inset-0 before:bg-[url('/noise.gif')] before:opacity-5 rounded-2xl border border-white/10">
-          <div className="relative p-6">
-            <div className="group-hover:bg-blue-400 bg-white  w-fit px-3 rounded-full text-sm py-1 text-black group-hover:text-white mb-3">
-              Market Analysis
-            </div>
-            <span className="text-lg group-hover:hidden inline-block font-semibold pt-2 text-slate-200 mb-3 ">
-              Real-time Analytics
-            </span>
-            <span className="text-lg group-hover:inline-block hidden font-semibold pt-2 text-slate-200 mb-3 ">
-              Market Insights
-            </span>
-            <p className="text-sm text-slate-500">
-              Get real-time market analysis and insights powered by advanced AI
-              algorithms to make informed trading decisions.
-            </p>
-          </div>
-        </div>
-        <div className="group bg-gradient-to-t from-[#050a0a] to-[#051818] hover:from-[#05070a] hover:to-[#0b1a3b] relative before:absolute before:inset-0 before:bg-[url('/noise.gif')] before:opacity-5 rounded-2xl border border-white/10">
-          <div className="relative p-6">
-            <div className="bg-green-400 group-hover:bg-blue-600  w-fit px-3 rounded-full text-sm py-1 text-white mb-3">
-              Security
-            </div>
-            <span className="text-lg group-hover:hidden inline-block font-semibold pt-2 text-slate-200 mb-3 ">
-              Enhanced Security
-            </span>
-            <span className="text-lg group-hover:inline-block hidden font-semibold pt-2 text-slate-200 mb-3 ">
-              Advanced Protection
-            </span>
-            <p className="text-sm text-slate-500">
-              State-of-the-art security measures to protect your assets and
-              trading activities with multi-factor authentication.
-            </p>
-          </div>
-        </div>
-        <div className="group bg-gradient-to-t from-[#171c35] to-[#000000] hover:from-[#2b131e] hover:to-[#141414] relative before:absolute before:inset-0 before:bg-[url('/noise.gif')] before:opacity-5 rounded-2xl border border-white/10">
-          <div className="relative p-6">
-            <div className="bg-blue-400 group-hover:bg-red-500  w-fit px-3 rounded-full text-sm py-1 text-white mb-3">
-              AI Trading
-            </div>
-            <span className="text-lg group-hover:hidden inline-block font-semibold pt-2 text-slate-200 mb-3 ">
-              Smart Trading
-            </span>
-            <span className="text-lg group-hover:inline-block hidden font-semibold pt-2 text-slate-200 mb-3 ">
-              AI-Powered Trades
-            </span>
-            <p className="text-sm text-slate-500">
-              Let AI assist your trading decisions with advanced pattern
-              recognition and market trend analysis.
-            </p>
-          </div>
-        </div>
-      </section> */}
+      <div className="w-full h-full pb-20 max-w-[75%] mx-auto">
+        <h1 className="text-5xl text-center mb-10">How it works</h1>
+        <HeroVideoDialog
+          className="block dark:hidden"
+          animationStyle="from-center"
+          videoSrc="https://www.youtube.com/embed/qh3NGpYRG3I?si=4rb-zSdDkVK9qxxb"
+          thumbnailSrc="https://startup-template-sage.vercel.app/hero-light.png"
+          thumbnailAlt="Hero Video"
+        />
+      </div>
     </div>
   );
 }
