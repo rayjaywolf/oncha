@@ -7,7 +7,6 @@ export default function Footer() {
     <footer className="w-full bg-[#01010e]/60 backdrop-blur-md border-t border-white/10">
       <div className="max-w-[75%] mx-auto px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Logo & About */}
           <div className="flex flex-col gap-4">
             <span className="text-xl font-bold text-white tracking-tight">
               ONCH<span className="text-blue-300">AI</span>N
@@ -32,7 +31,6 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Products */}
           <div className="flex flex-col gap-4">
             <h3 className="font-bold text-white mb-2 text-right">Products</h3>
             <Link
@@ -61,7 +59,6 @@ export default function Footer() {
             </Link>
           </div>
 
-          {/* Resources */}
           <div className="flex flex-col gap-4">
             <h3 className="font-bold text-white mb-2 text-right">Resources</h3>
             <Link
@@ -90,7 +87,6 @@ export default function Footer() {
             </Link>
           </div>
 
-          {/* Company */}
           <div className="flex flex-col gap-4">
             <h3 className="font-bold text-white mb-2 text-right">Company</h3>
             <Link
