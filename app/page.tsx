@@ -3,6 +3,7 @@ import { AnimatedShinyText } from "@/components/magicui/animated-shiny-text";
 import HeroVideoDialog from "@/components/magicui/hero-video-dialog";
 import { AvatarCircles } from "@/components/magicui/avatar-circles";
 import { ArrowRight, Cable, ShieldCheck, Zap } from "lucide-react";
+import Footer from "@/components/ui/footer";
 
 const avatars = [
   {
@@ -351,6 +352,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }
