@@ -1,7 +1,35 @@
 import Image from "next/image";
 import { AnimatedShinyText } from "@/components/magicui/animated-shiny-text";
 import HeroVideoDialog from "@/components/magicui/hero-video-dialog";
+import { AvatarCircles } from "@/components/magicui/avatar-circles";
 import { ArrowRight, Cable, ShieldCheck, Zap } from "lucide-react";
+
+const avatars = [
+  {
+    imageUrl: "https://avatars.githubusercontent.com/u/16860528",
+    profileUrl: "https://github.com/dillionverma",
+  },
+  {
+    imageUrl: "https://avatars.githubusercontent.com/u/20110627",
+    profileUrl: "https://github.com/tomonarifeehan",
+  },
+  {
+    imageUrl: "https://avatars.githubusercontent.com/u/106103625",
+    profileUrl: "https://github.com/BankkRoll",
+  },
+  {
+    imageUrl: "https://avatars.githubusercontent.com/u/59228569",
+    profileUrl: "https://github.com/safethecode",
+  },
+  {
+    imageUrl: "https://avatars.githubusercontent.com/u/59442788",
+    profileUrl: "https://github.com/sanjay-mali",
+  },
+  {
+    imageUrl: "https://avatars.githubusercontent.com/u/89768406",
+    profileUrl: "https://github.com/itsarghyadas",
+  },
+];
 
 export default function Home() {
   return (
@@ -301,6 +329,27 @@ export default function Home() {
           thumbnailSrc="https://startup-template-sage.vercel.app/hero-light.png"
           thumbnailAlt="Hero Video"
         />
+      </div>
+
+      <div className="h-full max-w-[75%] mx-auto pb-10">
+        <div className="h-full rounded-xl bg-gradient-to-b from-blue-900 to-blue-300 flex flex-col items-center justify-center gap-6 py-16 relative overflow-hidden">
+          <h1 className="text-4xl font-regular text-white z-10">
+            Join Our Community
+          </h1>
+          <p className="text-white/80 text-md font-regular text-center max-w-[400px] z-10">
+            Join our social media channels to stay updated with the latest news,
+            updates, and community discussions.
+          </p>
+          <AvatarCircles numPeople={99} avatarUrls={avatars} className="z-10" />
+          <div className="flex items-center mt-4 gap-2 z-10">
+            <button className="bg-white text-black px-4 py-2 rounded-full font-regular flex items-center gap-2">
+              Telegram <ArrowRight className="inline w-4 h-4" />
+            </button>
+            <button className="bg-transparent border border-white text-white px-4 py-2 rounded-full font-regular flex items-center gap-2 hover:bg-white/10 transition">
+              Twitter <ArrowRight className="inline w-4 h-4" />
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
