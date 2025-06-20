@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# (To be updated)
 
-## Getting Started
+# Oncha - A Modern Trading Assistant
 
-First, run the development server:
+I built Oncha to provide traders with a powerful set of tools to navigate the cryptocurrency markets more effectively. The goal is to help users make informed decisions by providing clear data and analysis, without the noise.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## The Problem
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The crypto space can be overwhelming. Traders face challenges like:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Information overload from various sources.
+- The risk of "rug pulls" and other scams.
+- Difficulty in tracking portfolio performance across different assets.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## The Solution: Oncha's Toolkit
 
-## Learn More
+I developed a suite of tools to address these challenges directly.
 
-To learn more about Next.js, take a look at the following resources:
+### Predictive Pulse
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+This tool helps with market analysis. It uses advanced algorithms to analyze chart patterns and market data to identify potential trading signals and insights. It's designed to help with:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- ✅ Real-time Analysis
+- ✅ Smart Predictions
+- ✅ Risk Management
+- ✅ Portfolio Tracking
 
-## Deploy on Vercel
+### Aegis Rug-Pull Shield
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Security is crucial in crypto. The Aegis Shield is an early warning system designed to help users identify and avoid potential rug pulls. It automates checks for common red flags, including:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- ✅ Holder Distribution Analysis
+- ✅ Smart Contract Veracity Checks
+- ✅ Liquidity Status (Locked/Burned)
+
+### The Vault
+
+A comprehensive portfolio tracker that gives you a clear view of your investments. It offers:
+
+- ✅ A unified dashboard for total portfolio value and PnL.
+- ✅ Detailed breakdown of each token.
+- ✅ Profit and loss tracking.
+- ✅ Insights to help with risk analysis and identifying opportunities.
+
+## How I Built It
+
+I built Oncha using Next.js, TypeScript, and Tailwind CSS. The user interface components are from shadcn/ui and Magic UI.
+
+During development, I used an AI assistant to help with some of the more repetitive tasks, like generating boilerplate code or providing autocompletion suggestions. This helped me focus more on the core logic and unique features of the application. The main architecture, component design, and core functionalities were all planned and coded by me.
