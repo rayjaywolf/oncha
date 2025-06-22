@@ -1,67 +1,184 @@
-import React from "react";
+"use client";
+
+import React, { useState, useRef, useEffect } from "react";
 import {
   PlusCircle,
   Image,
   Mic,
-  Send,
-  ThumbsUp,
-  ThumbsDown,
-  Grid3x3,
-  Wind,
   ArrowUpRight,
+  Wind,
+  Loader,
 } from "lucide-react";
 
-export default function App() {
-  return <ChatPage />;
+interface Message {
+  role: "user" | "assistant";
+  content: string;
 }
 
-const ChatPage = () => {
+export default function ChatPage() {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [messages]);
+
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || isLoading) return;
+
+    const userMessage: Message = { role: "user", content: input };
+    const newMessages = [...messages, userMessage];
+    setMessages(newMessages);
+    setInput("");
+    setIsLoading(true);
+
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ messages: newMessages }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`API error: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const assistantMessage: Message = {
+        role: "assistant",
+        content: data.content,
+      };
+      setMessages((prevMessages) => [...prevMessages, assistantMessage]);
+    } catch (error) {
+      console.error("Failed to get response:", error);
+      const errorMessage: Message = {
+        role: "assistant",
+        content:
+          "<p class='text-red-400'>Sorry, I encountered an error. Please check the console or try again.</p>",
+      };
+      setMessages((prevMessages) => [...prevMessages, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="bg-[#01010e] min-h-screen w-full flex flex-col font-sans text-gray-300">
-      <main className="flex-grow flex flex-col items-center justify-center text-center px-4 mt-20">
-        <div className="bg-white p-3 rounded-xl shadow-lg mb-6">
-          <Wind className="text-[#121212] h-8 w-8" />
-        </div>
-        <h2 className="text-4xl font-bold text-white mb-3">
-          Welcome to Predictive Pulse
-        </h2>
-        <p className="max-w-md text-gray-400">
-          I analyze chart patterns and market data to spot trading signals. Drop
-          a coin ticker or upload a chart for detailed insights.
-        </p>
-      </main>
+      <div className="flex-grow flex flex-col w-[60%] max-w-7xl mx-auto  mt-20">
+        {messages.length === 0 ? (
+          <div className="flex-grow flex flex-col items-center justify-center text-center">
+            <div className="bg-white p-3 rounded-xl shadow-lg mb-6">
+              <Wind className="text-[#121212] h-8 w-8" />
+            </div>
+            <h2 className="text-4xl font-bold text-white mb-3">
+              Welcome to Predictive Pulse
+            </h2>
+            <p className="max-w-md text-gray-400">
+              I analyze market data to spot trading opportunities. Give me a
+              coin ticker (e.g., $SOL), a contract address, or a DexScreener
+              link to get started.
+            </p>
+          </div>
+        ) : (
+          <div
+            ref={chatContainerRef}
+            className="w-full flex-grow overflow-y-auto py-4"
+          >
+            <div className="flex flex-col gap-4">
+              {messages.map((msg, index) => (
+                <div
+                  key={index}
+                  className={`flex ${
+                    msg.role === "user" ? "justify-end" : "justify-start"
+                  }`}
+                >
+                  <div
+                    className={`p-4 rounded-lg max-w-xl ${
+                      msg.role === "user"
+                        ? "bg-blue-600/30 text-white"
+                        : "bg-[#1a1a24] text-gray-300"
+                    }`}
+                  >
+                    {msg.role === "assistant" ? (
+                      <div dangerouslySetInnerHTML={{ __html: msg.content }} />
+                    ) : (
+                      msg.content
+                    )}
+                  </div>
+                </div>
+              ))}
+              {isLoading && (
+                <div className="flex justify-start">
+                  <div className="p-4 rounded-lg bg-[#1a1a24] text-gray-300">
+                    <Loader className="animate-spin h-5 w-5 text-blue-400" />
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
 
-      <footer className="w-full flex flex-col items-center p-4 pb-6">
-        <div className="w-full max-w-3xl">
-          <div className="relative">
+      <footer className="w-full flex flex-col items-center pt-4 pb-6 sticky bottom-0 bg-[#01010e]">
+        <div className="w-[60%] max-w-7xl">
+          <form onSubmit={handleSendMessage} className="relative">
             <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center space-x-3">
-              <button className="text-gray-400 hover:text-white">
+              <button
+                type="button"
+                className="text-gray-400 hover:text-white disabled:opacity-50"
+                disabled={isLoading}
+              >
                 <PlusCircle className="h-5 w-5" />
               </button>
-              <button className="text-gray-400 hover:text-white">
+              <button
+                type="button"
+                className="text-gray-400 hover:text-white disabled:opacity-50"
+                disabled={isLoading}
+              >
                 <Image className="h-5 w-5" />
               </button>
-              <button className="text-gray-400 hover:text-white">
+              <button
+                type="button"
+                className="text-gray-400 hover:text-white disabled:opacity-50"
+                disabled={isLoading}
+              >
                 <Mic className="h-5 w-5" />
               </button>
             </div>
             <input
               type="text"
-              placeholder="Ask me anything..."
-              className="w-full bg-[#282828] border border-gray-700 rounded-full py-4 pl-28 pr-48 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Analyze $ETH, a contract address, or paste a dexscreener.com link..."
+              className="w-full bg-[#282828] border border-gray-700 rounded-full py-4 pl-28 pr-16 text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              disabled={isLoading}
             />
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center space-x-3">
-              <button className="bg-gradient-to-br from-blue-500 to-purple-600 p-2.5 rounded-full text-white hover:opacity-90 transition-opacity flex items-center justify-center">
+            <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center">
+              <button
+                type="submit"
+                className="bg-gradient-to-br from-blue-500 to-purple-600 p-2.5 rounded-full text-white hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                disabled={!input.trim() || isLoading}
+              >
                 <ArrowUpRight className="h-5 w-5" />
               </button>
             </div>
-          </div>
+          </form>
         </div>
         <p className="text-xs text-gray-600 mt-3">
-          Predictive Pulse AI may contain errors. We recommend checking
-          important information.
+          Predictive Pulse AI may produce incorrect analysis. Always do your own
+          research.
         </p>
       </footer>
     </div>
   );
-};
+}
