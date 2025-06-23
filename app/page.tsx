@@ -335,7 +335,7 @@ export default function Home() {
       <div className="h-full max-w-[75%] mx-auto pb-10">
         <div className="h-full rounded-xl bg-gradient-to-br from-blue-900 to-blue-300 flex flex-col items-center justify-center gap-6 py-16 relative overflow-hidden">
           <h1 className="text-4xl font-regular text-white z-10">
-            . Join Our Communit
+            Join Our Community
           </h1>
           <p className="text-white/80 text-md font-regular text-center max-w-[400px] z-10">
             Join our social media channels to stay updated with the latest news,

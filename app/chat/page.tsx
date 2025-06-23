@@ -19,6 +19,8 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef<any>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -29,6 +31,43 @@ export default function ChatPage() {
       });
     }
   }, [messages]);
+
+  // Voice input logic
+  useEffect(() => {
+    if (typeof window !== "undefined" && !recognitionRef.current) {
+      const SpeechRecognition =
+        (window as any).SpeechRecognition ||
+        (window as any).webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        const recognition = new SpeechRecognition();
+        recognition.lang = "en-US";
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+        recognition.onresult = (event: any) => {
+          const transcript = event.results[0][0].transcript;
+          setInput(transcript);
+        };
+        recognition.onend = () => {
+          setIsListening(false);
+        };
+        recognition.onerror = () => {
+          setIsListening(false);
+        };
+        recognitionRef.current = recognition;
+      }
+    }
+  }, []);
+
+  const handleMicClick = () => {
+    if (!recognitionRef.current) return;
+    if (isListening) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+    } else {
+      setIsListening(true);
+      recognitionRef.current.start();
+    }
+  };
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -149,10 +188,19 @@ export default function ChatPage() {
               </button>
               <button
                 type="button"
-                className="text-gray-400 hover:text-white disabled:opacity-50"
+                className={`text-gray-400 hover:text-white disabled:opacity-50 relative ${
+                  isListening ? "text-blue-400" : ""
+                }`}
                 disabled={isLoading}
+                onClick={handleMicClick}
+                aria-label={
+                  isListening ? "Stop listening" : "Start voice input"
+                }
               >
                 <Mic className="h-5 w-5" />
+                {isListening && (
+                  <span className="absolute -right-2 -top-2 h-2 w-2 bg-blue-400 rounded-full animate-pulse" />
+                )}
               </button>
             </div>
             <input
