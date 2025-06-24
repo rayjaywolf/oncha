@@ -45,17 +45,19 @@ interface FinancialAnalysisData {
 }
 
 
-// --- System Prompt (Upgraded to correctly parse trading pairs) ---
-const FINVERO_SYSTEM_PROMPT = `You are Finvero, a world-class hybrid cryptocurrency analyst, blending technical chart analysis with fundamental, news-based insights. Your analysis is not just a plan; it's a complete, educational breakdown that makes the user smarter. You are sharp, insightful, and "informative as fuck".
+// --- System Prompt (Upgraded for Subtle, Authoritative Tone) ---
+const FINVERO_SYSTEM_PROMPT = `You are Finvero, a world-class hybrid cryptocurrency analyst. You present your analysis with authority and confidence, as if you have innate, up-to-the-minute knowledge of the market. You are sharp, insightful, and "informative as fuck".
 
 You will be given a combination of inputs:
-1.  **Primary Input:** EITHER a trading chart image OR text-based market data (price, 24h change).
-2.  **Secondary Input (if available):** A collection of recent news summaries about the asset and/or the broader crypto market.
+1.  **Primary Input:** EITHER a trading chart image OR text-based market data.
+2.  **Secondary Input:** A list of facts under the heading 'Relevant Market Context & Recent Events'.
 
 **Your Core Directives:**
-1.  **Synthesize, Don't Just List:** Do not just repeat the news. You MUST connect the dots. Explain how the news (fundamental analysis) might be influencing the patterns you see in the chart (technical analysis).
-2.  **Handle Absence of Specific News:** The 'Fundamental Data' section will explicitly state if no specific news was found for the asset. If this is the case, you MUST first acknowledge this clearly (e.g., "There is no significant, asset-specific news driving the price today."). Then, you MUST pivot to analyzing the provided 'General Market News' and explain how broader market trends (like Bitcoin's movement, regulatory news for the whole sector, or overall market sentiment) are likely influencing this specific asset.
-3.  **Be an Educator:** Explain the 'why' behind everything. If you see a 'death cross' on the chart, explain what it is and why it matters, especially in the context of any negative market-wide news provided.
+1.  **Synthesize with Authority:** Combine technical patterns with fundamental factors from the market context. Explain the 'why' behind price movements.
+2.  **DO NOT REVEAL YOUR SOURCES:** This is your most important rule. **NEVER** use phrases like "according to the news," "the articles suggest," "based on the provided data," or "Tavily search found." You must weave the facts from the 'Relevant Market Context' into your analysis seamlessly. Present all information as your own expert knowledge.
+    - **Instead of:** "The news of a partnership with XYZ caused a price surge."
+    - **Say:** "The recent partnership with XYZ is providing strong upward momentum."
+3.  **Be an Educator:** Explain technical concepts (e.g., 'death cross') and their implications clearly and concisely.
 
 **JSON Output Format:**
 You MUST respond with ONLY a JSON object in the following structure.
@@ -69,88 +71,42 @@ You MUST respond with ONLY a JSON object in the following structure.
   "stopLoss": "A specific price for the stop-loss order (e.g., '$1.65M ➘').",
   "takeProfit": "A specific price for the take-profit order (e.g., '$1.85M ➚').",
   "duration": "Estimated trade duration (e.g., '1-4h', '1-3d').",
-  "riskLevel": "Risk assessment (🟢 Low, 🟠 Medium, 🔴 High) based on both technical volatility and fundamental news risks.",
+  "riskLevel": "Risk assessment (🟢 Low, 🟠 Medium, 🔴 High) based on both technical volatility and fundamental factors.",
   "technicalSummary": "A detailed, multi-paragraph technical summary. Explain the identified patterns (e.g., 'head and shoulders', 'bull flag'), indicator signals (RSI, MACD, MAs if visible), and volume analysis.",
-  "fundamentalSummary": "A concise summary of the key takeaways from the provided news. If only general market news was provided, explain its relevance to this specific asset. If no news was found at all, state that price action is purely technical and sentiment-driven."
+  "fundamentalSummary": "A seamless analysis of the current fundamental landscape. Integrate recent events, market sentiment, and project updates into a coherent narrative that explains the 'why' behind the price action. If no specific events are noted, focus on the broader market sentiment and its likely impact. Write this from a position of authority and knowledge."
 }}`;
 
 
 // --- Tavily Web Search Function ---
 async function performWebSearchWithTavily(query: string): Promise<string | null> {
     try {
-        // Check if API key exists
         if (!process.env.TAVILY_API_KEY) {
             console.error("[TAVILY_ERROR] TAVILY_API_KEY is not configured");
             return "Could not fetch news: TAVILY_API_KEY is not configured in the environment.";
         }
-
         const tavilySearch = new TavilySearch({
             apiKey: process.env.TAVILY_API_KEY,
             maxResults: 5,
         });
-
-        console.log("[TAVILY_SEARCH] Searching for:", query);
         const searchResults = await tavilySearch.invoke({ query: query });
-        console.log("[TAVILY_SEARCH] Raw results:", typeof searchResults, searchResults);
-
         let formattedResults: string;
-
-        // Handle different response formats
-        if (Array.isArray(searchResults)) {
-            if (searchResults.length === 0) {
-                console.log("[TAVILY_SEARCH] No results found");
-                return null;
-            }
-            
-            formattedResults = searchResults.map((result: any) => {
-                const title = result.title || result.name || "No title";
-                const url = result.url || result.link || "No URL";
-                const content = result.content || result.snippet || result.description || "No content";
-                return `- Title: ${title}\n  URL: ${url}\n  Snippet: ${content}`;
-            }).join('\n\n');
-        } else if (typeof searchResults === 'string') {
-            if (searchResults.trim().length === 0) {
-                console.log("[TAVILY_SEARCH] Empty string result");
-                return null;
-            }
+        if (Array.isArray(searchResults) && searchResults.length > 0) {
+            formattedResults = searchResults.map(
+                (result: any) => `- Title: ${result.title}\n  URL: ${result.url}\n  Snippet: ${result.content}`
+            ).join('\n\n');
+        } else if (typeof searchResults === 'string' && searchResults.length > 0) {
             formattedResults = searchResults;
-        } else if (searchResults && typeof searchResults === 'object') {
-            // Handle object response format
-            if (searchResults.results && Array.isArray(searchResults.results)) {
-                formattedResults = searchResults.results.map((result: any) => {
-                    const title = result.title || result.name || "No title";
-                    const url = result.url || result.link || "No URL";
-                    const content = result.content || result.snippet || result.description || "No content";
-                    return `- Title: ${title}\n  URL: ${url}\n  Snippet: ${content}`;
-                }).join('\n\n');
-            } else {
-                console.log("[TAVILY_SEARCH] Unexpected object format:", searchResults);
-                return null;
-            }
         } else {
-            console.log("[TAVILY_SEARCH] No valid results found");
             return null;
         }
-
-        console.log("[TAVILY_SEARCH] Formatted results length:", formattedResults.length);
         return formattedResults;
-
     } catch (error) {
         console.error("[TAVILY_SEARCH_ERROR]", error);
-        
-        // Handle specific error types
         if (error instanceof Error) {
             if (error.message.includes("TAVILY_API_KEY") || error.message.includes("API key")) {
                 return "Could not fetch news: TAVILY_API_KEY is not configured correctly in the environment.";
             }
-            if (error.message.includes("rate limit") || error.message.includes("429")) {
-                return "Could not fetch news: Rate limit exceeded. Please try again later.";
-            }
-            if (error.message.includes("quota") || error.message.includes("limit")) {
-                return "Could not fetch news: API quota exceeded. Please try again later.";
-            }
         }
-        
         return "Could not fetch news due to an internal error. Please try again.";
     }
 }
@@ -340,13 +296,10 @@ export async function POST(req: Request) {
         const rawContent = response.content.toString().replace(/```json/g, "").replace(/```/g, "").trim();
         const analysisData = JSON.parse(rawContent) as FinancialAnalysisData;
         
-        // This part is crucial for image analysis.
-        // The AI determines the coin name and symbol. We use that for the display.
-        // We create a placeholder CoinData object because we don't fetch external data for images.
         const coinDataFromImage: CoinData = { 
             name: analysisData.coinName, 
             symbol: analysisData.coinSymbol, 
-            price: 0, // Price is determined by AI from the chart image itself
+            price: 0,
             change24h: null, 
             imageUrl: undefined 
         };
@@ -360,25 +313,22 @@ export async function POST(req: Request) {
             return NextResponse.json({ content: "I couldn't identify a valid cryptocurrency. Please provide a CoinGecko/DexScreener link, a contract address, or a symbol like '$BTC'." });
         }
         
-        // --- NEW CONDITIONAL SEARCH LOGIC ---
         let newsResults = await performWebSearchWithTavily(`${coinData.name} (${coinData.symbol}) cryptocurrency news and updates`);
-        let fundamentalDataSource: string;
+        let contextDataSource: string;
 
         if (newsResults) {
-            fundamentalDataSource = `Asset-Specific News Found:\n${newsResults}`;
+            contextDataSource = `For ${coinData.name}:\n${newsResults}`;
         } else {
             const generalMarketNews = await performWebSearchWithTavily(`cryptocurrency market news and sentiment today`);
             if (generalMarketNews) {
-                fundamentalDataSource = `No specific news was found for ${coinData.name}.
-                \n\nGeneral Market News:\n${generalMarketNews}`;
+                contextDataSource = `General Market Context:\n${generalMarketNews}`;
             } else {
-                fundamentalDataSource = "No specific or general market news could be retrieved. The analysis must be purely technical.";
+                contextDataSource = "No relevant market context could be retrieved.";
             }
         }
-        // --- END OF NEW LOGIC ---
 
         const marketData = `Current data for ${coinData.name} (${coinData.symbol}): Price is $${coinData.price}, 24h change is ${coinData.change24h?.toFixed(2) ?? 'N/A'}%.`;
-        const fullInput = `User Query: ${userInput}\n\nTechnical Data:\n${marketData}\n\nFundamental Data:\n${fundamentalDataSource}`;
+        const fullInput = `User Query: ${userInput}\n\nTechnical Data:\n${marketData}\n\nRelevant Market Context & Recent Events:\n${contextDataSource}`;
 
         const prompt = ChatPromptTemplate.fromMessages([ SystemMessagePromptTemplate.fromTemplate(FINVERO_SYSTEM_PROMPT), new MessagesPlaceholder("chat_history"), HumanMessagePromptTemplate.fromTemplate("{input}"), ]);
         const chain = prompt.pipe(model);

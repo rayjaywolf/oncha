@@ -37,33 +37,6 @@ export default function ChatPage() {
     }
   }, [messages]);
 
-<<<<<<< HEAD
-  // Voice input logic
-  useEffect(() => {
-    if (typeof window !== "undefined" && !recognitionRef.current) {
-      const SpeechRecognition =
-        (window as any).SpeechRecognition ||
-        (window as any).webkitSpeechRecognition;
-      if (SpeechRecognition) {
-        const recognition = new SpeechRecognition();
-        recognition.lang = "en-US";
-        recognition.interimResults = false;
-        recognition.maxAlternatives = 1;
-        recognition.onresult = (event: any) => {
-          const transcript = event.results[0][0].transcript;
-          setInput(transcript);
-        };
-        recognition.onend = () => {
-          setIsListening(false);
-        };
-        recognition.onerror = () => {
-          setIsListening(false);
-        };
-        recognitionRef.current = recognition;
-      }
-    }
-  }, []);
-
   const handleMicClick = () => {
     if (!recognitionRef.current) return;
     if (isListening) {
@@ -72,7 +45,10 @@ export default function ChatPage() {
     } else {
       setIsListening(true);
       recognitionRef.current.start();
-=======
+    }
+  };
+
+  // Image handling logic
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -86,12 +62,16 @@ export default function ChatPage() {
     setImagePreview(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
->>>>>>> 80e84e7 (image integration support)
     }
   };
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Stop listening if a message is sent while mic is on
+    if (isListening) {
+      recognitionRef.current?.stop();
+      setIsListening(false);
+    }
     if ((!input.trim() && !imageFile) || isLoading) return;
 
     const userMessage: Message = {
@@ -179,13 +159,11 @@ export default function ChatPage() {
                     }`}
                   >
                     {msg.role === "assistant" ? (
-                      // ================== THE FIX IS HERE ==================
                       <div
                         className="prose prose-invert max-w-none"
                         dangerouslySetInnerHTML={{ __html: msg.content }}
                       />
                     ) : (
-                      // =====================================================
                       <>
                         {msg.imageUrl && (
                           <img
@@ -253,29 +231,13 @@ export default function ChatPage() {
               >
                 <Image className="h-5 w-5" />
               </button>
-              <button
-                type="button"
-                className={`text-gray-400 hover:text-white disabled:opacity-50 relative ${
-                  isListening ? "text-blue-400" : ""
-                }`}
-                disabled={isLoading}
-                onClick={handleMicClick}
-                aria-label={
-                  isListening ? "Stop listening" : "Start voice input"
-                }
-              >
-                <Mic className="h-5 w-5" />
-                {isListening && (
-                  <span className="absolute -right-2 -top-2 h-2 w-2 bg-blue-400 rounded-full animate-pulse" />
-                )}
-              </button>
             </div>
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask about an image or analyze $ETH, a contract address..."
-              className="w-full bg-[#282828] border border-gray-700 rounded-full py-4 pl-28 pr-16 text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full bg-[#282828] border border-gray-700 rounded-full py-4 pl-21 pr-16 text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               disabled={isLoading}
             />
             <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center">
