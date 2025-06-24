@@ -28,14 +28,36 @@ export default function ChatPage() {
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
+  const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
     if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTo({
-        top: chatContainerRef.current.scrollHeight,
-        behavior: "smooth",
+      const container = chatContainerRef.current;
+      container.scrollTo({
+        top: container.scrollHeight,
+        behavior: behavior,
       });
     }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
   }, [messages]);
+
+  useEffect(() => {
+    const container = chatContainerRef.current;
+    if (!container) return;
+
+    const observer = new MutationObserver(() => {
+      scrollToBottom("smooth");
+    });
+
+    observer.observe(container, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   const handleMicClick = () => {
     if (!recognitionRef.current) return;
@@ -48,7 +70,6 @@ export default function ChatPage() {
     }
   };
 
-  // Image handling logic
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -67,30 +88,37 @@ export default function ChatPage() {
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Stop listening if a message is sent while mic is on
     if (isListening) {
       recognitionRef.current?.stop();
       setIsListening(false);
     }
-    if ((!input.trim() && !imageFile) || isLoading) return;
+    const canSendMessage = (input.trim() || imageFile) && !isLoading;
+    if (!canSendMessage) return;
+
+    const currentInput = input;
+    const currentImageFile = imageFile;
+    const currentImagePreview = imagePreview;
+    const previousMessages = messages;
 
     const userMessage: Message = {
       role: "user",
-      content: input,
-      imageUrl: imagePreview || undefined,
+      content: currentInput,
+      imageUrl: currentImagePreview || undefined,
     };
-    const newMessages = [...messages, userMessage];
-    setMessages(newMessages);
+
+    setMessages((prevMessages) => [...prevMessages, userMessage]);
     setInput("");
     removeImage();
     setIsLoading(true);
 
+    setTimeout(() => scrollToBottom("auto"), 0);
+
     try {
       const formData = new FormData();
-      formData.append("input", input);
-      formData.append("messages", JSON.stringify(messages));
-      if (imageFile) {
-        formData.append("image", imageFile);
+      formData.append("input", currentInput);
+      formData.append("messages", JSON.stringify(previousMessages));
+      if (currentImageFile) {
+        formData.append("image", currentImageFile);
       }
 
       const response = await fetch("/api/chat", {
@@ -103,11 +131,45 @@ export default function ChatPage() {
       }
 
       const data = await response.json();
-      const assistantMessage: Message = {
-        role: "assistant",
-        content: data.content,
-      };
-      setMessages((prevMessages) => [...prevMessages, assistantMessage]);
+      const assistantResponse = data.content;
+      const isFormatted = /<[a-z][\s\S]*>/i.test(assistantResponse);
+
+      if (isFormatted) {
+        const assistantMessage: Message = {
+          role: "assistant",
+          content: assistantResponse,
+        };
+        setMessages((prevMessages) => [...prevMessages, assistantMessage]);
+        setIsLoading(false);
+      } else {
+        const assistantMessagePlaceholder: Message = {
+          role: "assistant",
+          content: "",
+        };
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          assistantMessagePlaceholder,
+        ]);
+
+        let index = 0;
+        const intervalId = setInterval(() => {
+          setMessages((prev) => {
+            const newMsgs = [...prev];
+            const lastMsg = newMsgs[newMsgs.length - 1];
+            if (lastMsg.role === "assistant") {
+              lastMsg.content = assistantResponse.slice(0, index + 1);
+            }
+            return newMsgs;
+          });
+
+          index++;
+
+          if (index >= assistantResponse.length) {
+            clearInterval(intervalId);
+            setIsLoading(false);
+          }
+        }, 20);
+      }
     } catch (error) {
       console.error("Failed to get response:", error);
       const errorMessage: Message = {
@@ -116,10 +178,12 @@ export default function ChatPage() {
           "<p class='text-red-400'>Sorry, I encountered an error. Please check the console or try again.</p>",
       };
       setMessages((prevMessages) => [...prevMessages, errorMessage]);
-    } finally {
       setIsLoading(false);
     }
   };
+
+  const lastMessage = messages[messages.length - 1];
+  const showLoader = isLoading && (!lastMessage || lastMessage.role === "user");
 
   return (
     <div className="bg-[#01010e] min-h-screen w-full flex flex-col font-sans text-gray-300">
@@ -141,7 +205,8 @@ export default function ChatPage() {
         ) : (
           <div
             ref={chatContainerRef}
-            className="w-full flex-grow overflow-y-auto py-4"
+            className="w-full flex-grow overflow-y-auto py-4 scroll-smooth"
+            style={{ scrollBehavior: "smooth" }}
           >
             <div className="flex flex-col gap-4">
               {messages.map((msg, index) => (
@@ -178,7 +243,7 @@ export default function ChatPage() {
                   </div>
                 </div>
               ))}
-              {isLoading && (
+              {showLoader && (
                 <div className="flex justify-start">
                   <div className="p-4 rounded-lg bg-[#1a1a24] text-gray-300">
                     <Loader className="animate-spin h-5 w-5 text-blue-400" />
@@ -237,7 +302,7 @@ export default function ChatPage() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask about an image or analyze $ETH, a contract address..."
-              className="w-full bg-[#282828] border border-gray-700 rounded-full py-4 pl-21 pr-16 text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full bg-[#282828] border border-gray-700 rounded-full py-4 pl-20 pr-16 text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               disabled={isLoading}
             />
             <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center">
