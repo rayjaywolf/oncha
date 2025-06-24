@@ -27,6 +27,7 @@ export default function ChatPage() {
   const recognitionRef = useRef<any>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
     if (chatContainerRef.current) {
@@ -43,21 +44,10 @@ export default function ChatPage() {
   }, [messages]);
 
   useEffect(() => {
-    const container = chatContainerRef.current;
-    if (!container) return;
-
-    const observer = new MutationObserver(() => {
-      scrollToBottom("smooth");
-    });
-
-    observer.observe(container, {
-      childList: true,
-      subtree: true,
-      characterData: true,
-    });
-
-    return () => observer.disconnect();
-  }, []);
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   const handleMicClick = () => {
     if (!recognitionRef.current) return;
@@ -243,6 +233,7 @@ export default function ChatPage() {
                   </div>
                 </div>
               ))}
+              <div ref={messagesEndRef} />
               {showLoader && (
                 <div className="flex justify-start">
                   <div className="p-4 rounded-lg bg-[#1a1a24] text-gray-300">
