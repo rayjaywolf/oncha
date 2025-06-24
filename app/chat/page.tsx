@@ -8,20 +8,25 @@ import {
   ArrowUpRight,
   Wind,
   Loader,
+  X,
 } from "lucide-react";
 
 interface Message {
   role: "user" | "assistant";
   content: string;
+  imageUrl?: string;
 }
 
 export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<any>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -32,6 +37,7 @@ export default function ChatPage() {
     }
   }, [messages]);
 
+<<<<<<< HEAD
   // Voice input logic
   useEffect(() => {
     if (typeof window !== "undefined" && !recognitionRef.current) {
@@ -66,26 +72,50 @@ export default function ChatPage() {
     } else {
       setIsListening(true);
       recognitionRef.current.start();
+=======
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  const removeImage = () => {
+    setImageFile(null);
+    setImagePreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+>>>>>>> 80e84e7 (image integration support)
     }
   };
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isLoading) return;
+    if ((!input.trim() && !imageFile) || isLoading) return;
 
-    const userMessage: Message = { role: "user", content: input };
+    const userMessage: Message = {
+      role: "user",
+      content: input,
+      imageUrl: imagePreview || undefined,
+    };
     const newMessages = [...messages, userMessage];
     setMessages(newMessages);
     setInput("");
+    removeImage();
     setIsLoading(true);
 
     try {
+      const formData = new FormData();
+      formData.append("input", input);
+      formData.append("messages", JSON.stringify(messages));
+      if (imageFile) {
+        formData.append("image", imageFile);
+      }
+
       const response = await fetch("/api/chat", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ messages: newMessages }),
+        body: formData,
       });
 
       if (!response.ok) {
@@ -113,7 +143,7 @@ export default function ChatPage() {
 
   return (
     <div className="bg-[#01010e] min-h-screen w-full flex flex-col font-sans text-gray-300">
-      <div className="flex-grow flex flex-col w-[60%] max-w-7xl mx-auto  mt-20">
+      <div className="flex-grow flex flex-col w-[60%] max-w-7xl mx-auto mt-20">
         {messages.length === 0 ? (
           <div className="flex-grow flex flex-col items-center justify-center text-center">
             <div className="bg-white p-3 rounded-xl shadow-lg mb-6">
@@ -124,8 +154,8 @@ export default function ChatPage() {
             </h2>
             <p className="max-w-md text-gray-400">
               I analyze market data to spot trading opportunities. Give me a
-              coin ticker (e.g., $SOL), a contract address, or a DexScreener
-              link to get started.
+              coin ticker (e.g., $SOL), a contract address, a DexScreener link,
+              or upload an image to get started.
             </p>
           </div>
         ) : (
@@ -149,9 +179,23 @@ export default function ChatPage() {
                     }`}
                   >
                     {msg.role === "assistant" ? (
-                      <div dangerouslySetInnerHTML={{ __html: msg.content }} />
+                      // ================== THE FIX IS HERE ==================
+                      <div
+                        className="prose prose-invert max-w-none"
+                        dangerouslySetInnerHTML={{ __html: msg.content }}
+                      />
                     ) : (
-                      msg.content
+                      // =====================================================
+                      <>
+                        {msg.imageUrl && (
+                          <img
+                            src={msg.imageUrl}
+                            alt="User upload"
+                            className="rounded-lg mb-2 max-w-xs"
+                          />
+                        )}
+                        {msg.content}
+                      </>
                     )}
                   </div>
                 </div>
@@ -170,7 +214,29 @@ export default function ChatPage() {
 
       <footer className="w-full flex flex-col items-center pt-4 pb-6 sticky bottom-0 bg-[#01010e]">
         <div className="w-[60%] max-w-7xl">
+          {imagePreview && (
+            <div className="relative inline-block mb-2">
+              <img
+                src={imagePreview}
+                alt="Selected preview"
+                className="h-24 w-24 object-cover rounded-lg"
+              />
+              <button
+                onClick={removeImage}
+                className="absolute -top-2 -right-2 bg-gray-800 rounded-full p-1 text-white hover:bg-red-500"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          )}
           <form onSubmit={handleSendMessage} className="relative">
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleImageChange}
+              className="hidden"
+              accept="image/png, image/jpeg, image/webp, image/heic, image/heif"
+            />
             <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center space-x-3">
               <button
                 type="button"
@@ -181,6 +247,7 @@ export default function ChatPage() {
               </button>
               <button
                 type="button"
+                onClick={() => fileInputRef.current?.click()}
                 className="text-gray-400 hover:text-white disabled:opacity-50"
                 disabled={isLoading}
               >
@@ -207,7 +274,7 @@ export default function ChatPage() {
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Analyze $ETH, a contract address, or paste a dexscreener.com link..."
+              placeholder="Ask about an image or analyze $ETH, a contract address..."
               className="w-full bg-[#282828] border border-gray-700 rounded-full py-4 pl-28 pr-16 text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               disabled={isLoading}
             />
@@ -215,7 +282,7 @@ export default function ChatPage() {
               <button
                 type="submit"
                 className="bg-gradient-to-br from-blue-500 to-purple-600 p-2.5 rounded-full text-white hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                disabled={!input.trim() || isLoading}
+                disabled={(!input.trim() && !imageFile) || isLoading}
               >
                 <ArrowUpRight className="h-5 w-5" />
               </button>
