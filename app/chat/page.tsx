@@ -15,6 +15,7 @@ interface Message {
   role: "user" | "assistant";
   content: string;
   imageUrl?: string;
+  isFormatted?: boolean;
 }
 
 export default function ChatPage() {
@@ -125,17 +126,20 @@ export default function ChatPage() {
       const isFormatted = /<[a-z][\s\S]*>/i.test(assistantResponse);
 
       if (isFormatted) {
-        const assistantMessage: Message = {
+        const assistantMessage: Message & { isFormatted?: boolean } = {
           role: "assistant",
           content: assistantResponse,
+          isFormatted: true,
         };
         setMessages((prevMessages) => [...prevMessages, assistantMessage]);
         setIsLoading(false);
       } else {
-        const assistantMessagePlaceholder: Message = {
-          role: "assistant",
-          content: "",
-        };
+        const assistantMessagePlaceholder: Message & { isFormatted?: boolean } =
+          {
+            role: "assistant",
+            content: "",
+            isFormatted: false,
+          };
         setMessages((prevMessages) => [
           ...prevMessages,
           assistantMessagePlaceholder,
@@ -214,10 +218,14 @@ export default function ChatPage() {
                     }`}
                   >
                     {msg.role === "assistant" ? (
-                      <div
-                        className="prose prose-invert max-w-none"
-                        dangerouslySetInnerHTML={{ __html: msg.content }}
-                      />
+                      msg.isFormatted ? (
+                        <div
+                          className="prose prose-invert max-w-none"
+                          dangerouslySetInnerHTML={{ __html: msg.content }}
+                        />
+                      ) : (
+                        <div className="whitespace-pre-line">{msg.content}</div>
+                      )
                     ) : (
                       <>
                         {msg.imageUrl && (
