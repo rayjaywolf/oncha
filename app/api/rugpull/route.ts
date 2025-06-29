@@ -93,6 +93,18 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    // Fetch RugCheck report
+    let rugcheck = null;
+    try {
+      const rugcheckUrl = `https://api.rugcheck.xyz/v1/tokens/${tokenAddress}/report`;
+      const rugcheckRes = await fetch(rugcheckUrl);
+      if (rugcheckRes.ok) {
+        rugcheck = await rugcheckRes.json();
+      }
+    } catch (e) {
+      // Ignore rugcheck errors
+    }
+
     // Calculate mcap
     let mcap = null;
     if (price && totalSupply) {
@@ -105,6 +117,7 @@ export async function POST(req: NextRequest) {
       price,
       mcap,
       liquidityPools,
+      rugcheck,
     });
   } catch (err: any) {
     return NextResponse.json({ error: err.message || "Unknown error" }, { status: 500 });

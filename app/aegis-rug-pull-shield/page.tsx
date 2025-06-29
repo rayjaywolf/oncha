@@ -35,6 +35,7 @@ export default function AegisRugPullShield() {
   const [price, setPrice] = useState<number | null>(null);
   const [mcap, setMcap] = useState<number | null>(null);
   const [liquidityPools, setLiquidityPools] = useState<any[]>([]);
+  const [rugcheck, setRugcheck] = useState<any | null>(null);
 
   const fetchTopHolders = async () => {
     setLoading(true);
@@ -44,6 +45,7 @@ export default function AegisRugPullShield() {
     setPrice(null);
     setMcap(null);
     setLiquidityPools([]);
+    setRugcheck(null);
     try {
       const res = await fetch("/api/rugpull", {
         method: "POST",
@@ -57,6 +59,7 @@ export default function AegisRugPullShield() {
       setPrice(data.price ?? null);
       setMcap(data.mcap ?? null);
       setLiquidityPools(data.liquidityPools || []);
+      setRugcheck(data.rugcheck || null);
     } catch (err: any) {
       setError(err.message || "Unknown error");
     } finally {
@@ -178,6 +181,150 @@ export default function AegisRugPullShield() {
               </span>
             )}
           </div>
+          {rugcheck && (
+            <div className="mb-6 bg-[#181828] rounded-lg p-4">
+              <div className="flex flex-col md:flex-row md:items-center gap-4 mb-4">
+                {rugcheck.fileMeta?.image && (
+                  <img
+                    src={rugcheck.fileMeta.image}
+                    alt={rugcheck.fileMeta.name}
+                    className="w-16 h-16 rounded-md"
+                  />
+                )}
+                <div>
+                  <h2 className="text-white text-xl font-bold mb-1">
+                    {rugcheck.fileMeta?.name}{" "}
+                    <span className="text-white/60 text-lg">
+                      ({rugcheck.fileMeta?.symbol})
+                    </span>
+                  </h2>
+                  <div className="text-white/80 text-sm mb-1">
+                    {rugcheck.fileMeta?.description}
+                  </div>
+                  <div className="text-white/60 text-xs">
+                    Mint: {rugcheck.mint}
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-6 mb-2 text-white/80 text-sm">
+                <span>
+                  Score:{" "}
+                  <span className="font-bold">
+                    {rugcheck.score_normalised ?? rugcheck.score}
+                  </span>
+                </span>
+                <span>
+                  Rugged:{" "}
+                  <span
+                    className={
+                      rugcheck.rugged
+                        ? "text-red-400 font-bold"
+                        : "text-green-400 font-bold"
+                    }
+                  >
+                    {rugcheck.rugged ? "Yes" : "No"}
+                  </span>
+                </span>
+                <span>
+                  Creator: <span className="font-mono">{rugcheck.creator}</span>
+                </span>
+                <span>
+                  Freeze Authority:{" "}
+                  <span className="font-mono">{rugcheck.freezeAuthority}</span>
+                </span>
+                <span>
+                  Total Holders:{" "}
+                  <span className="font-bold">{rugcheck.totalHolders}</span>
+                </span>
+                <span>
+                  Total LP Providers:{" "}
+                  <span className="font-bold">{rugcheck.totalLPProviders}</span>
+                </span>
+                <span>
+                  Total Market Liquidity:{" "}
+                  <span className="font-bold">
+                    ${rugcheck.totalMarketLiquidity?.toLocaleString()}
+                  </span>
+                </span>
+              </div>
+              {rugcheck.risks && rugcheck.risks.length > 0 && (
+                <div className="mb-2">
+                  <h3 className="text-white text-md font-semibold mb-1">
+                    Risks
+                  </h3>
+                  <ul className="list-disc ml-6 text-yellow-300 text-sm">
+                    {rugcheck.risks.map((risk: any, idx: number) => (
+                      <li key={idx}>
+                        <span className="font-bold">{risk.name}</span> (
+                        {risk.level}): {risk.description}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {rugcheck.topHolders && rugcheck.topHolders.length > 0 && (
+                <div className="mb-2">
+                  <h3 className="text-white text-md font-semibold mb-1">
+                    Top Holders
+                  </h3>
+                  <table className="min-w-[300px] text-xs text-white/80">
+                    <thead>
+                      <tr>
+                        <th className="pr-2">Address</th>
+                        <th className="pr-2">%</th>
+                        <th>Insider</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rugcheck.topHolders
+                        .slice(0, 5)
+                        .map((h: any, idx: number) => (
+                          <tr key={h.address}>
+                            <td className="pr-2 font-mono">{h.address}</td>
+                            <td className="pr-2">{h.pct}%</td>
+                            <td>{h.insider ? "Yes" : "No"}</td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+              {rugcheck.markets && rugcheck.markets.length > 0 && (
+                <div className="mb-2">
+                  <h3 className="text-white text-md font-semibold mb-1">
+                    Markets
+                  </h3>
+                  <table className="min-w-[300px] text-xs text-white/80">
+                    <thead>
+                      <tr>
+                        <th className="pr-2">Type</th>
+                        <th className="pr-2">Liquidity</th>
+                        <th className="pr-2">LP Locked %</th>
+                        <th>LP Locked USD</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rugcheck.markets.map((m: any, idx: number) => (
+                        <tr key={m.pubkey}>
+                          <td className="pr-2">{m.marketType}</td>
+                          <td className="pr-2">
+                            {m.liquidityA} / {m.liquidityB}
+                          </td>
+                          <td className="pr-2">{m.lp?.lpLockedPct}%</td>
+                          <td>${m.lp?.lpLockedUSD?.toLocaleString()}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+              {rugcheck.rugged && (
+                <div className="mt-2 text-red-400 font-bold">
+                  ⚠️ This token is flagged as rugged!
+                </div>
+              )}
+            </div>
+          )}
           {liquidityPools.length > 0 && (
             <div className="mb-6 bg-[#181828] rounded-lg p-4">
               <h2 className="text-white text-lg mb-2">Liquidity Pools</h2>
