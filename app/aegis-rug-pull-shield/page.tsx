@@ -34,6 +34,7 @@ export default function AegisRugPullShield() {
   const [totalSupply, setTotalSupply] = useState<string>("");
   const [price, setPrice] = useState<number | null>(null);
   const [mcap, setMcap] = useState<number | null>(null);
+  const [liquidityPools, setLiquidityPools] = useState<any[]>([]);
 
   const fetchTopHolders = async () => {
     setLoading(true);
@@ -42,6 +43,7 @@ export default function AegisRugPullShield() {
     setTotalSupply("");
     setPrice(null);
     setMcap(null);
+    setLiquidityPools([]);
     try {
       const res = await fetch("/api/rugpull", {
         method: "POST",
@@ -54,6 +56,7 @@ export default function AegisRugPullShield() {
       setTotalSupply(data.totalSupply || "");
       setPrice(data.price ?? null);
       setMcap(data.mcap ?? null);
+      setLiquidityPools(data.liquidityPools || []);
     } catch (err: any) {
       setError(err.message || "Unknown error");
     } finally {
@@ -175,6 +178,69 @@ export default function AegisRugPullShield() {
               </span>
             )}
           </div>
+          {liquidityPools.length > 0 && (
+            <div className="mb-6 bg-[#181828] rounded-lg p-4">
+              <h2 className="text-white text-lg mb-2">Liquidity Pools</h2>
+              <div className="flex flex-col gap-4">
+                {liquidityPools.map((lp, idx) => (
+                  <div
+                    key={lp.pairAddress}
+                    className="border border-gray-700 rounded-md p-3 flex flex-col md:flex-row md:items-center md:gap-8 gap-2 bg-[#101018]"
+                  >
+                    <div className="flex items-center gap-2 mb-2 md:mb-0">
+                      {lp.exchangeLogo && (
+                        <img
+                          src={lp.exchangeLogo}
+                          alt={lp.exchangeName}
+                          className="w-6 h-6 rounded-full"
+                        />
+                      )}
+                      <span className="text-white font-semibold">
+                        {lp.exchangeName}
+                      </span>
+                      <span className="text-white/70">{lp.pairLabel}</span>
+                    </div>
+                    <div className="text-white/80">
+                      LP Size:{" "}
+                      <span className="font-bold">
+                        $
+                        {lp.liquidityUsd
+                          ? Number(lp.liquidityUsd).toLocaleString(undefined, {
+                              maximumFractionDigits: 2,
+                            })
+                          : "N/A"}
+                      </span>
+                    </div>
+                    <div className="text-white/60 text-xs">
+                      Tokens in Pool:{" "}
+                      {lp.tokens && lp.tokens.length > 0
+                        ? lp.tokens
+                            .map(
+                              (t: any) =>
+                                `${t.symbol || t.name || t.mint}: ${t.amount}`
+                            )
+                            .join(", ")
+                        : "N/A"}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {liquidityPools.some(
+                (lp) =>
+                  lp.liquidityUsd &&
+                  mcap &&
+                  lp.liquidityUsd < 10000 &&
+                  mcap > 100000
+              ) && (
+                <div className="mt-4 text-yellow-400 font-semibold">
+                  ⚠️ A small liquidity pool relative to the market cap makes the
+                  token highly volatile and easy to manipulate. Very low
+                  liquidity (e.g., under $10,000) for a token with a high market
+                  cap is a major risk factor.
+                </div>
+              )}
+            </div>
+          )}
           <table className="min-w-full border border-gray-700 rounded-lg overflow-hidden">
             <thead className="bg-[#181828] text-white">
               <tr>

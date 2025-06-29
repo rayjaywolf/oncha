@@ -51,6 +51,48 @@ export async function POST(req: NextRequest) {
     const metaData = await metaRes.json();
     const totalSupply = metaData.totalSupplyFormatted;
 
+    // Fetch all LP pairs for the token
+    const pairsUrl = `https://solana-gateway.moralis.io/token/mainnet/${tokenAddress}/pairs`;
+    const pairsRes = await fetch(pairsUrl, {
+      headers: {
+        accept: "application/json",
+        "X-API-Key": apiKey,
+      },
+    });
+    if (!pairsRes.ok) {
+      return NextResponse.json({ error: "Failed to fetch pairs from Moralis" }, { status: 500 });
+    }
+    const pairsData = await pairsRes.json();
+    const pairs = pairsData.pairs || [];
+
+    // For each pair, fetch its portfolio to get actual reserves
+    const liquidityPools = [];
+    for (const pair of pairs) {
+      const portfolioUrl = `https://solana-gateway.moralis.io/account/mainnet/${pair.pairAddress}/portfolio`;
+      const portfolioRes = await fetch(portfolioUrl, {
+        headers: {
+          accept: "application/json",
+          "X-API-Key": apiKey,
+        },
+      });
+      let portfolio = null;
+      if (portfolioRes.ok) {
+        portfolio = await portfolioRes.json();
+      }
+      liquidityPools.push({
+        exchangeName: pair.exchangeName,
+        exchangeLogo: pair.exchangeLogo,
+        pairLabel: pair.pairLabel,
+        pairAddress: pair.pairAddress,
+        liquidityUsd: pair.liquidityUsd,
+        usdPrice: pair.usdPrice,
+        baseToken: pair.baseToken,
+        quoteToken: pair.quoteToken,
+        tokens: portfolio ? portfolio.tokens : [],
+        nativeBalance: portfolio ? portfolio.nativeBalance : null,
+      });
+    }
+
     // Calculate mcap
     let mcap = null;
     if (price && totalSupply) {
@@ -62,6 +104,7 @@ export async function POST(req: NextRequest) {
       totalSupply,
       price,
       mcap,
+      liquidityPools,
     });
   } catch (err: any) {
     return NextResponse.json({ error: err.message || "Unknown error" }, { status: 500 });
