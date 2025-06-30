@@ -45,35 +45,42 @@ export async function POST(req: NextRequest) {
         })
       );
     }
-    // Fetch swaps/transactions (rate limit: only first page)
+    // Fetch swaps/transactions (fetch all pages with rate limiting)
     let totalSwaps = 0;
     let swaps = [];
-    try {
-      const swapsUrl = `https://solana-gateway.moralis.io/account/mainnet/${address}/swaps?pageSize=100`;
+    let cursor = null;
+    let page = 1;
+    const pageSize = 100;
+    while (true) {
+      let swapsUrl = `https://solana-gateway.moralis.io/account/mainnet/${address}/swaps?pageSize=${pageSize}`;
+      if (cursor) swapsUrl += `&cursor=${encodeURIComponent(cursor)}`;
       const swapsRes = await fetch(swapsUrl, {
         headers: {
           accept: "application/json",
           "X-API-Key": apiKey,
         },
       });
-      if (swapsRes.ok) {
-        const swapsData = await swapsRes.json();
-        totalSwaps = Array.isArray(swapsData.result) ? swapsData.result.length : 0;
-        // Only include relevant fields for each swap
-        if (Array.isArray(swapsData.result)) {
-          swaps = swapsData.result.map((tx: any) => ({
-            transactionHash: tx.transactionHash,
-            transactionType: tx.transactionType,
-            blockTimestamp: tx.blockTimestamp,
-            pairLabel: tx.pairLabel,
-            exchangeName: tx.exchangeName,
-            bought: tx.bought,
-            sold: tx.sold,
-            totalValueUsd: tx.totalValueUsd,
-          }));
-        }
+      if (!swapsRes.ok) break;
+      const swapsData = await swapsRes.json();
+      if (Array.isArray(swapsData.result)) {
+        swaps.push(...swapsData.result.map((tx: any) => ({
+          transactionHash: tx.transactionHash,
+          transactionType: tx.transactionType,
+          blockTimestamp: tx.blockTimestamp,
+          pairLabel: tx.pairLabel,
+          exchangeName: tx.exchangeName,
+          bought: tx.bought,
+          sold: tx.sold,
+          totalValueUsd: tx.totalValueUsd,
+        })));
       }
-    } catch {}
+      if (!swapsData.cursor) break;
+      cursor = swapsData.cursor;
+      page++;
+      // Rate limit: wait 300ms between requests
+      await new Promise((resolve) => setTimeout(resolve, 300));
+    }
+    totalSwaps = swaps.length;
     return NextResponse.json({
       nativeBalance: data.nativeBalance,
       tokens: tokensWithPrice,

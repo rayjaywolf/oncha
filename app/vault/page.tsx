@@ -110,6 +110,53 @@ export default function VaultPage() {
     });
   }
 
+  // Calculate PnL from swaps
+  let pnl: number | null = null;
+  if (portfolio && portfolio.swaps && portfolio.swaps.length > 0) {
+    let totalSell = 0;
+    let totalBuy = 0;
+    for (const tx of portfolio.swaps) {
+      if (tx.transactionType === "sell" && tx.totalValueUsd) {
+        totalSell += Number(tx.totalValueUsd);
+      } else if (tx.transactionType === "buy" && tx.totalValueUsd) {
+        totalBuy += Number(tx.totalValueUsd);
+      }
+    }
+    pnl = totalSell - totalBuy;
+  }
+
+  // Calculate PnL for every individual token
+  let tokenPnL: Record<
+    string,
+    { pnl: number; totalBuy: number; totalSell: number }
+  > = {};
+  if (portfolio && portfolio.swaps && portfolio.swaps.length > 0) {
+    for (const tx of portfolio.swaps) {
+      // For buy, use bought.symbol; for sell, use sold.symbol
+      if (
+        tx.transactionType === "buy" &&
+        tx.bought?.symbol &&
+        tx.totalValueUsd
+      ) {
+        const symbol = tx.bought.symbol;
+        if (!tokenPnL[symbol])
+          tokenPnL[symbol] = { pnl: 0, totalBuy: 0, totalSell: 0 };
+        tokenPnL[symbol].totalBuy += Number(tx.totalValueUsd);
+        tokenPnL[symbol].pnl -= Number(tx.totalValueUsd);
+      } else if (
+        tx.transactionType === "sell" &&
+        tx.sold?.symbol &&
+        tx.totalValueUsd
+      ) {
+        const symbol = tx.sold.symbol;
+        if (!tokenPnL[symbol])
+          tokenPnL[symbol] = { pnl: 0, totalBuy: 0, totalSell: 0 };
+        tokenPnL[symbol].totalSell += Number(tx.totalValueUsd);
+        tokenPnL[symbol].pnl += Number(tx.totalValueUsd);
+      }
+    }
+  }
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-8 bg-[#01010e]">
       <form
@@ -165,6 +212,26 @@ export default function VaultPage() {
               </span>
             </div>
           )}
+          <div className="mb-2 text-white/70">
+            PnL:{" "}
+            <span
+              className={`font-bold ${
+                pnl !== null
+                  ? pnl > 0
+                    ? "text-green-400"
+                    : pnl < 0
+                    ? "text-red-400"
+                    : "text-white"
+                  : "text-white"
+              }`}
+            >
+              {pnl !== null
+                ? `$${pnl.toLocaleString(undefined, {
+                    maximumFractionDigits: 2,
+                  })}`
+                : "-"}
+            </span>
+          </div>
           <div className="mb-6">
             <div className="text-lg font-semibold mb-1">Native SOL Balance</div>
             <div className="flex items-center gap-4">
@@ -293,6 +360,60 @@ export default function VaultPage() {
                             maximumFractionDigits: 2,
                           })
                         : "-"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+      {Object.keys(tokenPnL).length > 0 && (
+        <div className="mt-8 w-full max-w-2xl bg-[#18181b] rounded-lg p-6 text-white/90">
+          <div className="text-xl font-bold mb-4">PnL by Token</div>
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-sm text-left">
+              <thead className="text-white/60">
+                <tr>
+                  <th className="p-2 font-semibold">Token</th>
+                  <th className="p-2 font-semibold text-right">PnL (USD)</th>
+                  <th className="p-2 font-semibold text-right">
+                    Total Buys (USD)
+                  </th>
+                  <th className="p-2 font-semibold text-right">
+                    Total Sells (USD)
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(tokenPnL).map(([symbol, stats]) => (
+                  <tr
+                    key={symbol}
+                    className="border-t border-white/10 hover:bg-white/5"
+                  >
+                    <td className="p-2 font-mono">{symbol}</td>
+                    <td
+                      className={`p-2 text-right font-bold ${
+                        stats.pnl > 0
+                          ? "text-green-400"
+                          : stats.pnl < 0
+                          ? "text-red-400"
+                          : "text-white"
+                      }`}
+                    >
+                      {stats.pnl.toLocaleString(undefined, {
+                        maximumFractionDigits: 2,
+                      })}
+                    </td>
+                    <td className="p-2 text-right">
+                      {stats.totalBuy.toLocaleString(undefined, {
+                        maximumFractionDigits: 2,
+                      })}
+                    </td>
+                    <td className="p-2 text-right">
+                      {stats.totalSell.toLocaleString(undefined, {
+                        maximumFractionDigits: 2,
+                      })}
                     </td>
                   </tr>
                 ))}
