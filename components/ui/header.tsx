@@ -18,19 +18,19 @@ export default function Header() {
               href="/chat"
               className="text-white/80 hover:text-white transition font-medium"
             >
-              Chat
+              Predictive Pulse
             </Link>
             <a
-              href="#"
+              href="/aegis-rug-pull-shield"
               className="text-white/80 hover:text-white transition font-medium"
             >
-              Trending
+              Aegis Rug-Pull Shield
             </a>
             <a
-              href="#"
+              href="/vault"
               className="text-white/80 hover:text-white transition font-medium"
             >
-              Roadmap
+              Vault
             </a>
             <a
               href="#"
