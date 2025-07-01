@@ -10,6 +10,10 @@ export async function POST(req: NextRequest) {
     if (!apiKey) {
       return NextResponse.json({ error: "Missing Moralis API key" }, { status: 500 });
     }
+    // Get current timestamp and 24 hours ago
+    const now = new Date();
+    const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+
     // Fetch portfolio from Moralis
     const url = `https://solana-gateway.moralis.io/account/mainnet/${address}/portfolio`;
     const res = await fetch(url, {
@@ -81,11 +85,59 @@ export async function POST(req: NextRequest) {
       await new Promise((resolve) => setTimeout(resolve, 300));
     }
     totalSwaps = swaps.length;
+
+    // Calculate 24h change
+    let change24h = 0;
+    let change24hPercent = 0;
+
+    if (swaps.length > 0) {
+      // Get current portfolio value
+      let currentValue = 0;
+      if (data.nativeBalance) {
+        currentValue += Number(data.nativeBalance.solana) * (data.nativeBalance.solanaPrice || 0);
+      }
+      if (tokensWithPrice.length > 0) {
+        for (const token of tokensWithPrice) {
+          const tokenValue = token.price ? Number(token.price) * Number(token.amount) : 0;
+          currentValue += tokenValue;
+        }
+      }
+
+      // Calculate net flow in last 24 hours (money in - money out)
+      let netFlow24h = 0;
+      const swaps24h = swaps.filter(swap => {
+        const swapTime = new Date(swap.blockTimestamp);
+        return swapTime >= twentyFourHoursAgo;
+      });
+
+      for (const swap of swaps24h) {
+        if (swap.transactionType === 'buy') {
+          // Money going out (negative for net flow calculation)
+          netFlow24h -= swap.totalValueUsd || 0;
+        } else if (swap.transactionType === 'sell') {
+          // Money coming in (positive for net flow calculation)
+          netFlow24h += swap.totalValueUsd || 0;
+        }
+      }
+
+      // Portfolio value 24h ago = current value - net flow in last 24h
+      const portfolioValue24hAgo = currentValue - netFlow24h;
+      
+      // Calculate change
+      change24h = currentValue - portfolioValue24hAgo;
+      change24hPercent = portfolioValue24hAgo > 0 ? (change24h / portfolioValue24hAgo) * 100 : 0;
+    }
+
     return NextResponse.json({
       nativeBalance: data.nativeBalance,
       tokens: tokensWithPrice,
       totalSwaps,
       swaps,
+      change24h: {
+        absolute: change24h,
+        percentage: change24hPercent,
+        timestamp: now.toISOString(),
+      }
     });
   } catch (err: any) {
     return NextResponse.json({ error: err.message || "Unknown error" }, { status: 500 });

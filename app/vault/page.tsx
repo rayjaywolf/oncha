@@ -70,6 +70,11 @@ export default function VaultPage() {
     tokens?: any[];
     totalSwaps?: number;
     swaps?: any[];
+    change24h?: {
+      absolute: number;
+      percentage: number;
+      timestamp: string;
+    };
   } | null>(null);
   const [solPrice, setSolPrice] = useState<number | null>(null);
   const [showSolPriceWarning, setShowSolPriceWarning] = useState(false);
@@ -180,7 +185,9 @@ export default function VaultPage() {
       totalSell: number;
       unrealizedPnL: number;
       avgEntryPrice: number;
+      avgSellPrice: number;
       totalAmountBought: number;
+      totalAmountSold: number;
     }
   > = {};
   if (portfolio && portfolio.swaps && portfolio.swaps.length > 0) {
@@ -199,7 +206,9 @@ export default function VaultPage() {
             totalSell: 0,
             unrealizedPnL: 0,
             avgEntryPrice: 0,
+            avgSellPrice: 0,
             totalAmountBought: 0,
+            totalAmountSold: 0,
           };
         tokenPnL[symbol].totalBuy += Number(tx.totalValueUsd);
         tokenPnL[symbol].totalAmountBought += Number(tx.bought.amount || 0);
@@ -217,13 +226,16 @@ export default function VaultPage() {
             totalSell: 0,
             unrealizedPnL: 0,
             avgEntryPrice: 0,
+            avgSellPrice: 0,
             totalAmountBought: 0,
+            totalAmountSold: 0,
           };
         tokenPnL[symbol].totalSell += Number(tx.totalValueUsd);
+        tokenPnL[symbol].totalAmountSold += Number(tx.sold.amount || 0);
       }
     }
 
-    // Calculate average entry price and PnL for each token
+    // Calculate average entry price, average sell price, and PnL for each token
     for (const symbol in tokenPnL) {
       const stats = tokenPnL[symbol];
       stats.pnl = stats.totalSell - stats.totalBuy;
@@ -231,6 +243,11 @@ export default function VaultPage() {
       // Calculate average entry price
       if (stats.totalAmountBought > 0) {
         stats.avgEntryPrice = stats.totalBuy / stats.totalAmountBought;
+      }
+
+      // Calculate average sell price
+      if (stats.totalAmountSold > 0) {
+        stats.avgSellPrice = stats.totalSell / stats.totalAmountSold;
       }
 
       // Calculate unrealized PnL for tokens still held
@@ -350,6 +367,25 @@ export default function VaultPage() {
               </span>
             </div>
           )}
+          <div className="mb-2 text-white/70">
+            24h Change:{" "}
+            {portfolio.change24h?.absolute !== undefined && (
+              <span
+                className={`ml-2 text-sm ${
+                  portfolio.change24h.absolute > 0
+                    ? "text-green-400"
+                    : portfolio.change24h.absolute < 0
+                    ? "text-red-400"
+                    : "text-white/60"
+                }`}
+              >
+                {portfolio.change24h.absolute >= 0 ? "+" : ""}$
+                {portfolio.change24h.absolute.toLocaleString(undefined, {
+                  maximumFractionDigits: 0,
+                })}
+              </span>
+            )}
+          </div>
           <div className="mb-2 text-white/70">
             PnL:{" "}
             <span
@@ -549,6 +585,7 @@ export default function VaultPage() {
                   <th className="p-2 text-right">PnL (USD)</th>
                   <th className="p-2 text-right">Unrealized PnL (USD)</th>
                   <th className="p-2 text-right">Avg Entry Price</th>
+                  <th className="p-2 text-right">Sold Avg Price</th>
                   <th className="p-2 text-right">Total Buys (USD)</th>
                   <th className="p-2 text-right">Total Sells (USD)</th>
                 </tr>
@@ -592,6 +629,33 @@ export default function VaultPage() {
                       {stats.avgEntryPrice > 0
                         ? formatPriceWithSubscript(stats.avgEntryPrice)
                         : "-"}
+                    </td>
+                    <td className="p-2 text-right">
+                      {stats.avgSellPrice > 0 ? (
+                        <div className="flex flex-col items-end">
+                          <div>
+                            {formatPriceWithSubscript(stats.avgSellPrice)}
+                          </div>
+                          {stats.avgEntryPrice > 0 && (
+                            <div
+                              className={`text-xs ${
+                                stats.avgSellPrice > stats.avgEntryPrice
+                                  ? "text-green-400"
+                                  : stats.avgSellPrice < stats.avgEntryPrice
+                                  ? "text-red-400"
+                                  : "text-white/60"
+                              }`}
+                            >
+                              {(
+                                stats.avgSellPrice / stats.avgEntryPrice
+                              ).toFixed(2)}
+                              x
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        "-"
+                      )}
                     </td>
                     <td className="p-2 text-right">
                       {stats.totalBuy.toLocaleString(undefined, {
