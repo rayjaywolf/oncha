@@ -1,6 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 
 // Helper to fetch SOL price if not present in tokens
 async function fetchSolPrice(): Promise<number | null> {
@@ -13,6 +17,48 @@ async function fetchSolPrice(): Promise<number | null> {
   } catch {
     return null;
   }
+}
+
+// Helper function to format price with subscript notation for leading zeros
+function formatPriceWithSubscript(price: number): React.ReactNode {
+  if (price === 0) return "$0";
+
+  const priceStr = price.toString();
+  const [integerPart, decimalPart] = priceStr.split(".");
+
+  if (!decimalPart) {
+    return `$${integerPart}`;
+  }
+
+  // Count leading zeros in decimal part
+  let leadingZeros = 0;
+  for (let i = 0; i < decimalPart.length; i++) {
+    if (decimalPart[i] === "0") {
+      leadingZeros++;
+    } else {
+      break;
+    }
+  }
+
+  if (leadingZeros === 0) {
+    // No leading zeros, show only 2 decimal places
+    return `$${price.toFixed(2)}`;
+  }
+
+  const significantDigits = decimalPart.substring(leadingZeros);
+
+  if (leadingZeros > 0 && significantDigits.length > 0) {
+    // Only show first 4 significant digits
+    const displayDigits = significantDigits.substring(0, 4);
+    return (
+      <span>
+        ${integerPart}.0<sub>{leadingZeros}</sub>
+        {displayDigits}
+      </span>
+    );
+  }
+
+  return `$${priceStr}`;
 }
 
 export default function VaultPage() {
@@ -128,7 +174,14 @@ export default function VaultPage() {
   // Calculate PnL for every individual token
   let tokenPnL: Record<
     string,
-    { pnl: number; totalBuy: number; totalSell: number }
+    {
+      pnl: number;
+      totalBuy: number;
+      totalSell: number;
+      unrealizedPnL: number;
+      avgEntryPrice: number;
+      totalAmountBought: number;
+    }
   > = {};
   if (portfolio && portfolio.swaps && portfolio.swaps.length > 0) {
     for (const tx of portfolio.swaps) {
@@ -140,22 +193,107 @@ export default function VaultPage() {
       ) {
         const symbol = tx.bought.symbol;
         if (!tokenPnL[symbol])
-          tokenPnL[symbol] = { pnl: 0, totalBuy: 0, totalSell: 0 };
+          tokenPnL[symbol] = {
+            pnl: 0,
+            totalBuy: 0,
+            totalSell: 0,
+            unrealizedPnL: 0,
+            avgEntryPrice: 0,
+            totalAmountBought: 0,
+          };
         tokenPnL[symbol].totalBuy += Number(tx.totalValueUsd);
-        tokenPnL[symbol].pnl -= Number(tx.totalValueUsd);
-      } else if (
+        tokenPnL[symbol].totalAmountBought += Number(tx.bought.amount || 0);
+      }
+      if (
         tx.transactionType === "sell" &&
         tx.sold?.symbol &&
         tx.totalValueUsd
       ) {
         const symbol = tx.sold.symbol;
         if (!tokenPnL[symbol])
-          tokenPnL[symbol] = { pnl: 0, totalBuy: 0, totalSell: 0 };
+          tokenPnL[symbol] = {
+            pnl: 0,
+            totalBuy: 0,
+            totalSell: 0,
+            unrealizedPnL: 0,
+            avgEntryPrice: 0,
+            totalAmountBought: 0,
+          };
         tokenPnL[symbol].totalSell += Number(tx.totalValueUsd);
-        tokenPnL[symbol].pnl += Number(tx.totalValueUsd);
+      }
+    }
+
+    // Calculate average entry price and PnL for each token
+    for (const symbol in tokenPnL) {
+      const stats = tokenPnL[symbol];
+      stats.pnl = stats.totalSell - stats.totalBuy;
+
+      // Calculate average entry price
+      if (stats.totalAmountBought > 0) {
+        stats.avgEntryPrice = stats.totalBuy / stats.totalAmountBought;
+      }
+
+      // Calculate unrealized PnL for tokens still held
+      const currentToken = portfolio.tokens?.find((t) => t.symbol === symbol);
+      if (currentToken && currentToken.price) {
+        const currentValue =
+          Number(currentToken.price) * Number(currentToken.amount);
+        const netCost = stats.totalBuy - stats.totalSell;
+        stats.unrealizedPnL = currentValue - netCost;
       }
     }
   }
+
+  // Calculate total unrealized PnL
+  const totalUnrealizedPnL = Object.values(tokenPnL).reduce(
+    (sum, stats) => sum + stats.unrealizedPnL,
+    0
+  );
+
+  // Calculate allocation percentages for tokens
+  let tokenAllocations: Record<string, { value: number; percentage: number }> =
+    {};
+  if (portfolio && portfolio.tokens && totalValue > 0) {
+    for (const token of portfolio.tokens) {
+      const tokenValue = token.price
+        ? Number(token.price) * Number(token.amount)
+        : 0;
+      if (tokenValue >= 1) {
+        // Only include tokens worth $1 or more
+        const percentage = (tokenValue / totalValue) * 100;
+        tokenAllocations[token.symbol] = { value: tokenValue, percentage };
+      }
+    }
+
+    // Add native SOL if significant
+    if (nativeSolUsd !== null && nativeSolUsd >= 1) {
+      const percentage = (nativeSolUsd / totalValue) * 100;
+      tokenAllocations["SOL"] = { value: nativeSolUsd, percentage };
+    }
+  }
+
+  // Generate colors for pie chart - using same colors as Aegis page
+  const COLORS = [
+    "#8884d8",
+    "#82ca9d",
+    "#ffc658",
+    "#ff8042",
+    "#0088FE",
+    "#00C49F",
+    "#FFBB28",
+    "#FF6699",
+    "#A28BFE",
+    "#B6E880",
+  ];
+
+  // Prepare pie chart data
+  const pieChartData = Object.entries(tokenAllocations)
+    .sort(([, a], [, b]) => b.percentage - a.percentage)
+    .map(([symbol, data]) => ({
+      name: symbol,
+      value: Number(data.percentage.toFixed(2)),
+      usdValue: data.value,
+    }));
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-8 bg-[#01010e]">
@@ -196,7 +334,7 @@ export default function VaultPage() {
           </div>
           <div className="text-3xl font-bold mb-4">
             $
-            {totalValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+            {totalValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}
           </div>
           <div className="mb-2 text-white/70">
             Total Tokens:{" "}
@@ -227,9 +365,26 @@ export default function VaultPage() {
             >
               {pnl !== null
                 ? `$${pnl.toLocaleString(undefined, {
-                    maximumFractionDigits: 2,
+                    maximumFractionDigits: 0,
                   })}`
                 : "-"}
+            </span>
+          </div>
+          <div className="mb-2 text-white/70">
+            Unrealized PnL:{" "}
+            <span
+              className={`font-bold ${
+                totalUnrealizedPnL > 0
+                  ? "text-green-400"
+                  : totalUnrealizedPnL < 0
+                  ? "text-red-400"
+                  : "text-white"
+              }`}
+            >
+              $
+              {totalUnrealizedPnL.toLocaleString(undefined, {
+                maximumFractionDigits: 0,
+              })}
             </span>
           </div>
           <div className="mb-6">
@@ -242,7 +397,7 @@ export default function VaultPage() {
                 <span className="text-white/60 text-base">
                   ($
                   {nativeSolUsd.toLocaleString(undefined, {
-                    maximumFractionDigits: 2,
+                    maximumFractionDigits: 0,
                   })}{" "}
                   USD)
                 </span>
@@ -250,148 +405,163 @@ export default function VaultPage() {
             </div>
           </div>
           <div className="text-lg font-semibold mb-2">Tokens</div>
-          <ul className="space-y-2">
-            {filteredTokens.length > 0 ? (
-              filteredTokens.map((token) => (
-                <li key={token.mint} className="flex items-center gap-3">
+          <div className="space-y-3">
+            {filteredTokens.map((token, idx) => (
+              <div
+                key={idx}
+                className="flex items-center justify-between p-3 bg-white/5 rounded-lg"
+              >
+                <div className="flex items-center gap-3">
                   {token.logo && (
                     <img
                       src={token.logo}
                       alt={token.symbol}
-                      className="w-6 h-6 rounded-full"
+                      className="w-8 h-8 rounded-full"
                     />
                   )}
-                  <span className="font-medium">
-                    {token.symbol || token.name}
-                  </span>
-                  <span className="ml-auto">
-                    {Number(token.amount).toLocaleString()} {token.symbol}
-                  </span>
-                  {typeof token.valueUsd === "number" && (
-                    <span className="ml-4 text-white/60">
-                      $
-                      {token.valueUsd.toLocaleString(undefined, {
-                        maximumFractionDigits: 2,
-                      })}
-                    </span>
-                  )}
-                </li>
-              ))
-            ) : (
-              <li className="text-white/60">No tokens found.</li>
-            )}
-          </ul>
+                  <div>
+                    <div className="font-semibold">{token.symbol}</div>
+                    <div className="text-sm text-white/60">{token.name}</div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="font-mono">
+                    {Number(token.amount).toLocaleString(undefined, {
+                      maximumFractionDigits: 0,
+                    })}
+                  </div>
+                  <div className="text-sm text-white/60">
+                    $
+                    {token.price
+                      ? (
+                          Number(token.price) * Number(token.amount)
+                        ).toLocaleString(undefined, {
+                          maximumFractionDigits: 0,
+                        })
+                      : "-"}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
-      {portfolio && portfolio.swaps && portfolio.swaps.length > 0 && (
-        <div className="mt-8 w-full max-w-2xl bg-[#18181b] rounded-lg p-6 text-white/90">
-          <div className="text-xl font-bold mb-4">
-            Recent Swaps / Transactions
-          </div>
-          <div className="overflow-x-auto">
-            <table className="min-w-full text-sm text-left">
-              <thead className="text-white/60">
-                <tr>
-                  <th className="p-2 font-semibold">Date</th>
-                  <th className="p-2 font-semibold">Type</th>
-                  <th className="p-2 font-semibold">Pair</th>
-                  <th className="p-2 font-semibold">Exchange</th>
-                  <th className="p-2 font-semibold">Bought</th>
-                  <th className="p-2 font-semibold">Sold</th>
-                  <th className="p-2 font-semibold text-right">USD Value</th>
-                </tr>
-              </thead>
-              <tbody>
-                {portfolio.swaps.map((tx, idx) => (
-                  <tr
-                    key={
-                      tx.transactionHash + "-" + tx.blockTimestamp + "-" + idx
-                    }
-                    className="border-t border-white/10 hover:bg-white/5"
+      {portfolio && Object.keys(tokenAllocations).length > 0 && (
+        <div className="mt-8 w-full max-w-6xl bg-[#18181b] rounded-lg p-6 text-white/90">
+          <div className="text-xl font-bold mb-6">Portfolio Allocation</div>
+          <div className="flex flex-col lg:flex-row gap-8">
+            {/* Pie Chart */}
+            <div className="flex-1 flex justify-center">
+              <div className="w-80 h-80 relative">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={pieChartData}
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={80}
+                      outerRadius={120}
+                      paddingAngle={2}
+                      labelLine={false}
+                    >
+                      {pieChartData.map((entry, idx) => (
+                        <Cell
+                          key={`cell-${idx}`}
+                          fill={COLORS[idx % COLORS.length]}
+                          stroke="none"
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      contentStyle={{
+                        background: "rgba(20, 20, 30, 0.9)",
+                        border: "1px solid rgba(255, 255, 255, 0.2)",
+                        borderRadius: "10px",
+                        color: "#fff",
+                      }}
+                      itemStyle={{ color: "#eee" }}
+                      formatter={(value: any, name: any, props: any) => [
+                        `${value}%`,
+                        `${name} - $${props.payload.usdValue.toLocaleString(
+                          undefined,
+                          { maximumFractionDigits: 0 }
+                        )}`,
+                      ]}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                  <span className="text-white/60 text-sm">Total Value</span>
+                  <span className="text-white font-bold text-2xl">
+                    $
+                    {totalValue.toLocaleString(undefined, {
+                      maximumFractionDigits: 0,
+                    })}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Legend */}
+            <div className="flex-1">
+              <div className="space-y-3">
+                {pieChartData.map((item, index) => (
+                  <div
+                    key={item.name}
+                    className="flex items-center justify-between"
                   >
-                    <td className="p-2 whitespace-nowrap">
-                      {new Date(tx.blockTimestamp).toLocaleDateString()}
-                      <br />
-                      <span className="text-xs text-white/50">
-                        {new Date(tx.blockTimestamp).toLocaleTimeString()}
-                      </span>
-                    </td>
-                    <td className="p-2 capitalize">{tx.transactionType}</td>
-                    <td className="p-2">{tx.pairLabel}</td>
-                    <td className="p-2">{tx.exchangeName}</td>
-                    <td className="p-2">
-                      {tx.bought?.logo && (
-                        <img
-                          src={tx.bought.logo}
-                          alt={tx.bought.symbol}
-                          className="w-5 h-5 inline-block mr-1 align-middle"
-                        />
-                      )}
-                      <span>
-                        {tx.bought?.amount
-                          ? Number(tx.bought.amount).toLocaleString(undefined, {
-                              maximumFractionDigits: 4,
-                            })
-                          : "-"}{" "}
-                        {tx.bought?.symbol}
-                      </span>
-                    </td>
-                    <td className="p-2">
-                      {tx.sold?.logo && (
-                        <img
-                          src={tx.sold.logo}
-                          alt={tx.sold.symbol}
-                          className="w-5 h-5 inline-block mr-1 align-middle"
-                        />
-                      )}
-                      <span>
-                        {tx.sold?.amount
-                          ? Number(tx.sold.amount).toLocaleString(undefined, {
-                              maximumFractionDigits: 4,
-                            })
-                          : "-"}{" "}
-                        {tx.sold?.symbol}
-                      </span>
-                    </td>
-                    <td className="p-2 text-right">
-                      $
-                      {tx.totalValueUsd
-                        ? Number(tx.totalValueUsd).toLocaleString(undefined, {
-                            maximumFractionDigits: 2,
-                          })
-                        : "-"}
-                    </td>
-                  </tr>
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="w-4 h-4 rounded"
+                        style={{
+                          backgroundColor: COLORS[index % COLORS.length],
+                        }}
+                      ></div>
+                      <span className="font-semibold">{item.name}</span>
+                    </div>
+                    <div className="text-right">
+                      <div className="font-bold">{item.value}%</div>
+                      <div className="text-sm text-white/60">
+                        $
+                        {item.usdValue.toLocaleString(undefined, {
+                          maximumFractionDigits: 0,
+                        })}
+                      </div>
+                    </div>
+                  </div>
                 ))}
-              </tbody>
-            </table>
+              </div>
+            </div>
           </div>
         </div>
       )}
       {Object.keys(tokenPnL).length > 0 && (
-        <div className="mt-8 w-full max-w-2xl bg-[#18181b] rounded-lg p-6 text-white/90">
+        <div className="mt-8 w-full max-w-6xl bg-[#18181b] rounded-lg p-6 text-white/90">
           <div className="text-xl font-bold mb-4">PnL by Token</div>
           <div className="overflow-x-auto">
             <table className="min-w-full text-sm text-left">
               <thead className="text-white/60">
                 <tr>
-                  <th className="p-2 font-semibold">Token</th>
-                  <th className="p-2 font-semibold text-right">PnL (USD)</th>
-                  <th className="p-2 font-semibold text-right">
-                    Total Buys (USD)
-                  </th>
-                  <th className="p-2 font-semibold text-right">
-                    Total Sells (USD)
-                  </th>
+                  <th className="p-2 text-left">Token</th>
+                  <th className="p-2 text-right">Allocation (%)</th>
+                  <th className="p-2 text-right">PnL (USD)</th>
+                  <th className="p-2 text-right">Unrealized PnL (USD)</th>
+                  <th className="p-2 text-right">Avg Entry Price</th>
+                  <th className="p-2 text-right">Total Buys (USD)</th>
+                  <th className="p-2 text-right">Total Sells (USD)</th>
                 </tr>
               </thead>
               <tbody>
                 {Object.entries(tokenPnL).map(([symbol, stats]) => (
-                  <tr
-                    key={symbol}
-                    className="border-t border-white/10 hover:bg-white/5"
-                  >
-                    <td className="p-2 font-mono">{symbol}</td>
+                  <tr key={symbol} className="border-t border-white/10">
+                    <td className="p-2 font-semibold">{symbol}</td>
+                    <td className="p-2 text-right">
+                      {tokenAllocations[symbol]
+                        ? `${tokenAllocations[symbol].percentage.toFixed(1)}%`
+                        : "-"}
+                    </td>
                     <td
                       className={`p-2 text-right font-bold ${
                         stats.pnl > 0
@@ -402,17 +572,35 @@ export default function VaultPage() {
                       }`}
                     >
                       {stats.pnl.toLocaleString(undefined, {
-                        maximumFractionDigits: 2,
+                        maximumFractionDigits: 0,
+                      })}
+                    </td>
+                    <td
+                      className={`p-2 text-right font-bold ${
+                        stats.unrealizedPnL > 0
+                          ? "text-green-400"
+                          : stats.unrealizedPnL < 0
+                          ? "text-red-400"
+                          : "text-white"
+                      }`}
+                    >
+                      {stats.unrealizedPnL.toLocaleString(undefined, {
+                        maximumFractionDigits: 0,
                       })}
                     </td>
                     <td className="p-2 text-right">
+                      {stats.avgEntryPrice > 0
+                        ? formatPriceWithSubscript(stats.avgEntryPrice)
+                        : "-"}
+                    </td>
+                    <td className="p-2 text-right">
                       {stats.totalBuy.toLocaleString(undefined, {
-                        maximumFractionDigits: 2,
+                        maximumFractionDigits: 0,
                       })}
                     </td>
                     <td className="p-2 text-right">
                       {stats.totalSell.toLocaleString(undefined, {
-                        maximumFractionDigits: 2,
+                        maximumFractionDigits: 0,
                       })}
                     </td>
                   </tr>
