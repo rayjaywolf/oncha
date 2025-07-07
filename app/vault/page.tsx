@@ -436,204 +436,98 @@ export default function VaultPage() {
     }));
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-8 bg-[#01010e]">
-      <form
-        className="flex flex-col gap-4 w-full max-w-sm bg-transparent"
-        onSubmit={handleSubmit}
-      >
-        <label htmlFor="wallet" className="text-lg font-medium text-white/80">
-          Wallet Address
-        </label>
-
-        <input
-          id="wallet"
-          name="wallet"
-          type="text"
-          placeholder="Enter wallet address"
-          className="border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-[#18181b] text-white placeholder:text-white/50"
-          value={wallet}
-          onChange={(e) => setWallet(e.target.value)}
-        />
-
-        <button
-          type="submit"
-          className="bg-blue-600 text-white rounded px-4 py-2 hover:bg-blue-700 transition"
-          disabled={loading || !wallet}
+    <div className="flex flex-col  items-center justify-center min-h-screen pt-25 pb-20 bg-[#01010e]">
+      <div className="flex flex-col gap-4 w-full max-w-5xl">
+        <form
+          className="grid grid-cols-[7fr_1fr] gap-2 w-full  bg-gray-900/60 rounded-lg p-4"
+          onSubmit={handleSubmit}
         >
-          {loading ? "Loading..." : "Submit"}
-        </button>
-      </form>
+          <input
+            id="wallet"
+            name="wallet"
+            type="text"
+            placeholder="Enter wallet address"
+            className="px-4 py-2 rounded-full bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={wallet}
+            onChange={(e) => setWallet(e.target.value)}
+          />
 
-      {error && <div className="text-red-400 mt-4">{error}</div>}
-
-      {showSolPriceWarning && (
-        <div className="text-yellow-400 mt-4">
-          Could not fetch SOL price. Native SOL value may be missing.
-        </div>
-      )}
-
-      {portfolio && (
-        <div className="mt-8 w-full max-w-md bg-[#18181b] rounded-lg p-6 text-white/90">
-          <div className="text-xl font-bold mb-2">
-            Total Portfolio Value (USD)
-          </div>
-
-          <div className="text-3xl font-bold mb-4">
-            $
-            {totalValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-          </div>
-
-          <div className="mb-2 text-white/70">
-            Total Tokens:{" "}
-            <span className="font-bold text-white">
-              {filteredTokens.length}
-            </span>
-          </div>
-
-          {typeof portfolio.totalSwaps === "number" && (
-            <div className="mb-2 text-white/70">
-              Total Swaps/Transactions:{" "}
-              <span className="font-bold text-white">
-                {portfolio.totalSwaps}
-              </span>
-            </div>
-          )}
-
-          <div className="mb-2 text-white/70">
-            24h Change:{" "}
-            {portfolio.change24h?.absolute !== undefined && (
-              <span
-                className={`ml-2 text-sm ${
-                  portfolio.change24h.absolute > 0
-                    ? "text-green-400"
-                    : portfolio.change24h.absolute < 0
-                    ? "text-red-400"
-                    : "text-white/60"
-                }`}
-              >
-                {portfolio.change24h.absolute >= 0 ? "+" : ""}$
-                {portfolio.change24h.absolute.toLocaleString(undefined, {
+          <button
+            type="submit"
+            className="px-6 py-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-semibold transition"
+            disabled={loading || !wallet}
+          >
+            {loading ? "Loading..." : "Submit"}
+          </button>
+        </form>
+        <div className="rounded-lg bg-gray-900/60 flex flex-col">
+          <div className=" grid grid-cols-[1fr_1fr_1fr] w-full max-w-5xl">
+            <div className="p-8 px-10 flex flex-col gap-2 relative">
+              <h1 className="text-2xl font-bold">Total Portfolio Value</h1>
+              <h1 className="text-4xl font-bold">
+                $
+                {totalValue.toLocaleString(undefined, {
                   maximumFractionDigits: 0,
                 })}
-              </span>
-            )}
-          </div>
-
-          <div className="mb-2 text-white/70">
-            PnL:{" "}
-            <span
-              className={`font-bold ${
-                pnl !== null
-                  ? pnl > 0
-                    ? "text-green-400"
-                    : pnl < 0
-                    ? "text-red-400"
-                    : "text-white"
-                  : "text-white"
-              }`}
-            >
-              {pnl !== null
-                ? `$${pnl.toLocaleString(undefined, {
-                    maximumFractionDigits: 0,
-                  })}`
-                : "-"}
-            </span>
-          </div>
-
-          <div className="mb-2 text-white/70">
-            Unrealized PnL:{" "}
-            <span
-              className={`font-bold ${
-                totalUnrealizedPnL > 0
-                  ? "text-green-400"
-                  : totalUnrealizedPnL < 0
-                  ? "text-red-400"
-                  : "text-white"
-              }`}
-            >
-              $
-              {totalUnrealizedPnL.toLocaleString(undefined, {
-                maximumFractionDigits: 0,
-              })}
-            </span>
-          </div>
-
-          <div className="mb-6">
-            <div className="text-lg font-semibold mb-1">Native SOL Balance</div>
-
-            <div className="flex items-center gap-4">
-              <span className="text-white/90 text-lg font-mono">
-                {nativeSol ?? "-"} SOL
-              </span>
-
-              {nativeSolUsd !== null && (
-                <span className="text-white/60 text-base">
-                  ($
-                  {nativeSolUsd.toLocaleString(undefined, {
-                    maximumFractionDigits: 0,
-                  })}{" "}
-                  USD)
-                </span>
-              )}
+              </h1>
+              <p>Last 24h: {portfolio?.change24h?.percentage.toFixed(2)}%</p>
+              {/* Custom border */}
+              <div className="absolute right-0 h-2/3 w-px bg-gray-800" />
+            </div>
+            <div className="p-8 px-10 flex flex-col gap-2 relative">
+              <h1 className="text-2xl font-bold">Realized PnL</h1>
+              <h1 className="text-4xl font-bold">
+                $
+                {pnl?.toLocaleString(undefined, {
+                  maximumFractionDigits: 0,
+                })}
+              </h1>
+              <p>Last 24h: {portfolio?.change24h?.percentage.toFixed(2)}%</p>
+              {/* Custom border */}
+              <div className="absolute right-0  h-2/3 w-px bg-gray-800" />
+            </div>
+            <div className="p-8 px-10 flex flex-col gap-2">
+              <h1 className="text-2xl font-bold">Unrealized PnL</h1>
+              <h1 className="text-4xl font-bold">
+                $
+                {totalUnrealizedPnL.toLocaleString(undefined, {
+                  maximumFractionDigits: 0,
+                })}
+              </h1>
+              <p>Last 24h: {portfolio?.change24h?.percentage.toFixed(2)}%</p>
             </div>
           </div>
-
-          <div className="text-lg font-semibold mb-2">Tokens</div>
-
-          <div className="space-y-3">
-            {filteredTokens.map((token, idx) => (
-              <div
-                key={idx}
-                className="flex items-center justify-between p-3 bg-white/5 rounded-lg"
-              >
-                <div className="flex items-center gap-3">
-                  {token.logo && (
-                    <img
-                      src={token.logo}
-                      alt={token.symbol}
-                      className="w-8 h-8 rounded-full"
-                    />
-                  )}
-
-                  <div>
-                    <div className="font-semibold">{token.symbol}</div>
-
-                    <div className="text-sm text-white/60">{token.name}</div>
-                  </div>
-                </div>
-
-                <div className="text-right">
-                  <div className="font-mono">
-                    {Number(token.amount).toLocaleString(undefined, {
-                      maximumFractionDigits: 0,
-                    })}
-                  </div>
-
-                  <div className="text-sm text-white/60">
-                    $
-                    {token.price
-                      ? (
-                          Number(token.price) * Number(token.amount)
-                        ).toLocaleString(undefined, {
-                          maximumFractionDigits: 0,
-                        })
-                      : "-"}
-                  </div>
-                </div>
-              </div>
-            ))}
+          <hr className="w-[90%] pt-4 mx-auto border-gray-800" />
+          <div className="pb-6 grid grid-cols-[1fr_1fr_1fr] w-full max-w-5xl">
+            <div className="px-10 flex flex-col gap-2 relative">
+              <p className="text-left">
+                Win Rate:{" "}
+                <span className="font-bold">
+                  {((portfolio?.totalSwaps || 0) /
+                    (portfolio?.totalSwaps || 1)) *
+                    100}
+                  %
+                </span>
+              </p>
+            </div>
+            <div className="px-10 flex flex-col gap-2 relative">
+              <p className="text-left">
+                Total Tokens:{" "}
+                <span className="font-bold"> {filteredTokens.length}</span>
+              </p>
+            </div>
+            <div className="px-10 flex flex-col gap-2">
+              <p className="text-left">
+                Total Transactions:{" "}
+                <span className="font-bold"> {portfolio?.totalSwaps}</span>
+              </p>
+            </div>
           </div>
         </div>
-      )}
-
-      {portfolio && Object.keys(tokenAllocations).length > 0 && (
-        <div className="mt-8 w-full max-w-6xl bg-[#18181b] rounded-lg p-6 text-white/90">
-          <div className="text-xl font-bold mb-6">Portfolio Allocation</div>
-
-          <div className="flex flex-col lg:flex-row gap-8">
-            {/* Pie Chart */}
-
-            <div className="flex-1 flex justify-center">
+        <div className="rounded-lg grid grid-cols-[1fr_1fr] gap-4">
+          <div className="bg-gray-900/60 p-8 px-10 flex flex-col gap-2 rounded-lg">
+            <h1 className="text-2xl font-bold">Portfolio Allocation</h1>
+            <div className="flex justify-center">
               <div className="w-80 h-80 relative">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
@@ -693,163 +587,144 @@ export default function VaultPage() {
                 </div>
               </div>
             </div>
-
-            {/* Legend */}
-
-            <div className="flex-1">
-              <div className="space-y-3">
-                {pieChartData.map((item, index) => (
-                  <div
-                    key={item.name}
-                    className="flex items-center justify-between"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="w-4 h-4 rounded"
-                        style={{
-                          backgroundColor: COLORS[index % COLORS.length],
-                        }}
-                      ></div>
-
-                      <span className="font-semibold">{item.name}</span>
-                    </div>
-
-                    <div className="text-right">
-                      <div className="font-bold">{item.value}%</div>
-
-                      <div className="text-sm text-white/60">
-                        $
-                        {item.usdValue.toLocaleString(undefined, {
-                          maximumFractionDigits: 0,
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+          </div>
+          <div className="bg-gray-900/60 p-8 px-10 flex flex-col gap-2 rounded-lg">
+            <h1 className="text-2xl font-bold">Tokens</h1>
+            <div className="flex flex-col gap-2 mt-2">
+              {filteredTokens.map((token) => (
+                <div
+                  key={token.symbol}
+                  className="flex items-center gap-2 bg-gray-800/60 px-4 py-2 rounded-lg"
+                >
+                  <img
+                    src={token.logo}
+                    alt={token.symbol}
+                    className="w-4 h-4"
+                  />
+                  <p>{token.symbol}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
-      )}
+        <div className="rounded-lg grid grid-cols-[1fr] gap-4">
+          <div className="bg-gray-900/60 p-8 px-10 flex flex-col gap-2 rounded-lg">
+            <h1 className="text-2xl font-bold">Performance by Token</h1>
+            <div className="overflow-x-auto mt-4 -mb-2">
+              <table className="min-w-full text-sm text-left">
+                <thead className="text-white/60">
+                  <tr>
+                    <th className="p-2 text-left">Token</th>
 
-      {Object.keys(tokenPnL).length > 0 && (
-        <div className="mt-8 w-full max-w-6xl bg-[#18181b] rounded-lg p-6 text-white/90">
-          <div className="text-xl font-bold mb-4">PnL by Token</div>
+                    <th className="p-2 text-right">Allocation (%)</th>
 
-          <div className="overflow-x-auto">
-            <table className="min-w-full text-sm text-left">
-              <thead className="text-white/60">
-                <tr>
-                  <th className="p-2 text-left">Token</th>
+                    <th className="p-2 text-right">PnL (USD)</th>
 
-                  <th className="p-2 text-right">Allocation (%)</th>
+                    <th className="p-2 text-right">Unrealized PnL (USD)</th>
 
-                  <th className="p-2 text-right">PnL (USD)</th>
+                    <th className="p-2 text-right">Avg Entry Price</th>
 
-                  <th className="p-2 text-right">Unrealized PnL (USD)</th>
+                    <th className="p-2 text-right">Sold Avg Price</th>
 
-                  <th className="p-2 text-right">Avg Entry Price</th>
+                    <th className="p-2 text-right">Total Buys (USD)</th>
 
-                  <th className="p-2 text-right">Sold Avg Price</th>
-
-                  <th className="p-2 text-right">Total Buys (USD)</th>
-
-                  <th className="p-2 text-right">Total Sells (USD)</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {Object.entries(tokenPnL).map(([symbol, stats]) => (
-                  <tr key={symbol} className="border-t border-white/10">
-                    <td className="p-2 font-semibold">{symbol}</td>
-
-                    <td className="p-2 text-right">
-                      {tokenAllocations[symbol]
-                        ? `${tokenAllocations[symbol].percentage.toFixed(1)}%`
-                        : "-"}
-                    </td>
-
-                    <td
-                      className={`p-2 text-right font-bold ${
-                        stats.pnl > 0
-                          ? "text-green-400"
-                          : stats.pnl < 0
-                          ? "text-red-400"
-                          : "text-white"
-                      }`}
-                    >
-                      {stats.pnl.toLocaleString(undefined, {
-                        maximumFractionDigits: 0,
-                      })}
-                    </td>
-
-                    <td
-                      className={`p-2 text-right font-bold ${
-                        stats.unrealizedPnL > 0
-                          ? "text-green-400"
-                          : stats.unrealizedPnL < 0
-                          ? "text-red-400"
-                          : "text-white"
-                      }`}
-                    >
-                      {stats.unrealizedPnL.toLocaleString(undefined, {
-                        maximumFractionDigits: 0,
-                      })}
-                    </td>
-
-                    <td className="p-2 text-right">
-                      {stats.avgEntryPrice > 0
-                        ? formatPriceWithSubscript(stats.avgEntryPrice)
-                        : "-"}
-                    </td>
-
-                    <td className="p-2 text-right">
-                      {stats.avgSellPrice > 0 ? (
-                        <div className="flex flex-col items-end">
-                          <div>
-                            {formatPriceWithSubscript(stats.avgSellPrice)}
-                          </div>
-
-                          {stats.avgEntryPrice > 0 && (
-                            <div
-                              className={`text-xs ${
-                                stats.avgSellPrice > stats.avgEntryPrice
-                                  ? "text-green-400"
-                                  : stats.avgSellPrice < stats.avgEntryPrice
-                                  ? "text-red-400"
-                                  : "text-white/60"
-                              }`}
-                            >
-                              {(
-                                stats.avgSellPrice / stats.avgEntryPrice
-                              ).toFixed(2)}
-                              x
-                            </div>
-                          )}
-                        </div>
-                      ) : (
-                        "-"
-                      )}
-                    </td>
-
-                    <td className="p-2 text-right">
-                      {stats.totalBuy.toLocaleString(undefined, {
-                        maximumFractionDigits: 0,
-                      })}
-                    </td>
-
-                    <td className="p-2 text-right">
-                      {stats.totalSell.toLocaleString(undefined, {
-                        maximumFractionDigits: 0,
-                      })}
-                    </td>
+                    <th className="p-2 text-right">Total Sells (USD)</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+
+                <tbody>
+                  {Object.entries(tokenPnL).map(([symbol, stats]) => (
+                    <tr key={symbol} className="border-t border-white/10">
+                      <td className="p-2 font-semibold">{symbol}</td>
+
+                      <td className="p-2 text-right">
+                        {tokenAllocations[symbol]
+                          ? `${tokenAllocations[symbol].percentage.toFixed(1)}%`
+                          : "-"}
+                      </td>
+
+                      <td
+                        className={`p-2 text-right font-bold ${
+                          stats.pnl > 0
+                            ? "text-green-400"
+                            : stats.pnl < 0
+                            ? "text-red-400"
+                            : "text-white"
+                        }`}
+                      >
+                        {stats.pnl.toLocaleString(undefined, {
+                          maximumFractionDigits: 0,
+                        })}
+                      </td>
+
+                      <td
+                        className={`p-2 text-right font-bold ${
+                          stats.unrealizedPnL > 0
+                            ? "text-green-400"
+                            : stats.unrealizedPnL < 0
+                            ? "text-red-400"
+                            : "text-white"
+                        }`}
+                      >
+                        {stats.unrealizedPnL.toLocaleString(undefined, {
+                          maximumFractionDigits: 0,
+                        })}
+                      </td>
+
+                      <td className="p-2 text-right">
+                        {stats.avgEntryPrice > 0
+                          ? formatPriceWithSubscript(stats.avgEntryPrice)
+                          : "-"}
+                      </td>
+
+                      <td className="p-2 text-right">
+                        {stats.avgSellPrice > 0 ? (
+                          <div className="flex flex-col items-end">
+                            <div>
+                              {formatPriceWithSubscript(stats.avgSellPrice)}
+                            </div>
+
+                            {stats.avgEntryPrice > 0 && (
+                              <div
+                                className={`text-xs ${
+                                  stats.avgSellPrice > stats.avgEntryPrice
+                                    ? "text-green-400"
+                                    : stats.avgSellPrice < stats.avgEntryPrice
+                                    ? "text-red-400"
+                                    : "text-white/60"
+                                }`}
+                              >
+                                {(
+                                  stats.avgSellPrice / stats.avgEntryPrice
+                                ).toFixed(2)}
+                                x
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          "-"
+                        )}
+                      </td>
+
+                      <td className="p-2 text-right">
+                        {stats.totalBuy.toLocaleString(undefined, {
+                          maximumFractionDigits: 0,
+                        })}
+                      </td>
+
+                      <td className="p-2 text-right">
+                        {stats.totalSell.toLocaleString(undefined, {
+                          maximumFractionDigits: 0,
+                        })}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

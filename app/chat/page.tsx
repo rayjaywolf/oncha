@@ -56,6 +56,7 @@ export default function ChatPage() {
       recognitionRef.current.stop();
       setIsListening(false);
     } else {
+      ``;
       setIsListening(true);
       recognitionRef.current.start();
     }
