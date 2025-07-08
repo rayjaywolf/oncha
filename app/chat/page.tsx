@@ -280,7 +280,10 @@ export default function ChatPage() {
               className="hidden"
               accept="image/png, image/jpeg, image/webp, image/heic, image/heif"
             />
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center space-x-3">
+            <div
+              className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center space-x-3;
+            |"
+            >
               <button
                 type="button"
                 className="text-gray-400 hover:text-white disabled:opacity-50"

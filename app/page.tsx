@@ -183,7 +183,7 @@ export default function Home() {
             </div>
           </div>
           <div className="flex flex-col gap-4 max-w-[75%] mx-auto">
-            <div className="h-full w-full border-1 border-white/10   rounded-2xl grid grid-cols-2">
+            <div className="h-full w-full border-1 border-white/10 rounded-2xl grid grid-cols-2">
               <div className="flex flex-col py-4 px-8">
                 <h3 className="font-bold mb-8 text-xl text-red-300">
                   Aegis Rug-Pull Shield

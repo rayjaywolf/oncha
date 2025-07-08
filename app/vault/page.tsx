@@ -9,6 +9,17 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
+import {
+  DollarSign,
+  TrendingUp,
+  TrendingDown,
+  Coins,
+  ListOrdered,
+  ArrowUpRight,
+  ArrowDownRight,
+} from "lucide-react";
+
+import { cn } from "@/lib/utils";
 
 // Helper to fetch SOL price if not present in tokens
 
@@ -436,10 +447,10 @@ export default function VaultPage() {
     }));
 
   return (
-    <div className="flex flex-col  items-center justify-center min-h-screen pt-25 pb-20 bg-[#01010e]">
+    <div className="flex flex-col items-center justify-center min-h-screen pt-24 pb-10 bg-[#10101a]">
       <div className="flex flex-col gap-4 w-full max-w-5xl">
         <form
-          className="grid grid-cols-[7fr_1fr] gap-2 w-full  bg-gray-900/60 rounded-lg p-4"
+          className="grid grid-cols-[7fr_1fr] gap-2 w-full bg-gray-900/60 rounded-lg p-4"
           onSubmit={handleSubmit}
         >
           <input
@@ -451,7 +462,6 @@ export default function VaultPage() {
             value={wallet}
             onChange={(e) => setWallet(e.target.value)}
           />
-
           <button
             type="submit"
             className="px-6 py-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-semibold transition"
@@ -461,40 +471,69 @@ export default function VaultPage() {
           </button>
         </form>
         <div className="rounded-lg bg-gray-900/60 flex flex-col">
-          <div className=" grid grid-cols-[1fr_1fr_1fr] w-full max-w-5xl">
+          <div className="grid grid-cols-[1fr_1fr_1fr] w-full max-w-5xl">
+            {/* Stat Card */}
             <div className="p-8 px-10 flex flex-col gap-2 relative">
-              <h1 className="text-2xl font-bold">Total Portfolio Value</h1>
-              <h1 className="text-4xl font-bold">
+              <div className="flex items-center gap-2 mb-1">
+                <DollarSign className="w-5 h-5 text-blue-400" />
+                <h1 className="text-xl font-bold text-white">
+                  Total Portfolio Value
+                </h1>
+              </div>
+              <h1 className="text-4xl font-bold text-cyan-400">
                 $
                 {totalValue.toLocaleString(undefined, {
                   maximumFractionDigits: 0,
                 })}
               </h1>
-              <p>Last 24h: {portfolio?.change24h?.percentage.toFixed(2)}%</p>
-              {/* Custom border */}
+              <p className="text-gray-400">
+                Last 24h: {portfolio?.change24h?.percentage.toFixed(2)}%
+              </p>
               <div className="absolute right-0 h-2/3 w-px bg-gray-800" />
             </div>
             <div className="p-8 px-10 flex flex-col gap-2 relative">
-              <h1 className="text-2xl font-bold">Realized PnL</h1>
-              <h1 className="text-4xl font-bold">
-                $
-                {pnl?.toLocaleString(undefined, {
-                  maximumFractionDigits: 0,
-                })}
+              <div className="flex items-center gap-2 mb-1">
+                <TrendingUp className="w-5 h-5 text-green-400" />
+                <h1 className="text-xl font-bold text-white">Realized PnL</h1>
+              </div>
+              <h1
+                className={`text-4xl font-bold ${
+                  pnl && pnl > 0
+                    ? "text-green-400"
+                    : pnl && pnl < 0
+                    ? "text-red-400"
+                    : "text-white"
+                }`}
+              >
+                ${pnl?.toLocaleString(undefined, { maximumFractionDigits: 0 })}
               </h1>
-              <p>Last 24h: {portfolio?.change24h?.percentage.toFixed(2)}%</p>
-              {/* Custom border */}
-              <div className="absolute right-0  h-2/3 w-px bg-gray-800" />
+              <p className="text-gray-400">
+                Last 24h: {portfolio?.change24h?.percentage.toFixed(2)}%
+              </p>
+              <div className="absolute right-0 h-2/3 w-px bg-gray-800" />
             </div>
             <div className="p-8 px-10 flex flex-col gap-2">
-              <h1 className="text-2xl font-bold">Unrealized PnL</h1>
-              <h1 className="text-4xl font-bold">
+              <div className="flex items-center gap-2 mb-1">
+                <TrendingDown className="w-5 h-5 text-yellow-400" />
+                <h1 className="text-xl font-bold text-white">Unrealized PnL</h1>
+              </div>
+              <h1
+                className={`text-4xl font-bold ${
+                  totalUnrealizedPnL > 0
+                    ? "text-emerald-400"
+                    : totalUnrealizedPnL < 0
+                    ? "text-red-400"
+                    : "text-white"
+                }`}
+              >
                 $
                 {totalUnrealizedPnL.toLocaleString(undefined, {
                   maximumFractionDigits: 0,
                 })}
               </h1>
-              <p>Last 24h: {portfolio?.change24h?.percentage.toFixed(2)}%</p>
+              <p className="text-gray-400">
+                Last 24h: {portfolio?.change24h?.percentage.toFixed(2)}%
+              </p>
             </div>
           </div>
           <hr className="w-[90%] pt-4 mx-auto border-gray-800" />
@@ -502,7 +541,21 @@ export default function VaultPage() {
             <div className="px-10 flex flex-col gap-2 relative">
               <p className="text-left">
                 Win Rate:{" "}
-                <span className="font-bold">
+                <span
+                  className={`font-bold ${
+                    ((portfolio?.totalSwaps || 0) /
+                      (portfolio?.totalSwaps || 1)) *
+                      100 >=
+                    50
+                      ? "text-green-400"
+                      : ((portfolio?.totalSwaps || 0) /
+                          (portfolio?.totalSwaps || 1)) *
+                          100 >=
+                        20
+                      ? "text-yellow-400"
+                      : "text-red-400"
+                  }`}
+                >
                   {((portfolio?.totalSwaps || 0) /
                     (portfolio?.totalSwaps || 1)) *
                     100}
@@ -513,20 +566,29 @@ export default function VaultPage() {
             <div className="px-10 flex flex-col gap-2 relative">
               <p className="text-left">
                 Total Tokens:{" "}
-                <span className="font-bold"> {filteredTokens.length}</span>
+                <span className="font-bold text-blue-400">
+                  {filteredTokens.length}
+                </span>
               </p>
             </div>
             <div className="px-10 flex flex-col gap-2">
               <p className="text-left">
                 Total Transactions:{" "}
-                <span className="font-bold"> {portfolio?.totalSwaps}</span>
+                <span className="font-bold text-purple-400">
+                  {portfolio?.totalSwaps}
+                </span>
               </p>
             </div>
           </div>
         </div>
         <div className="rounded-lg grid grid-cols-[1fr_1fr] gap-4">
           <div className="bg-gray-900/60 p-8 px-10 flex flex-col gap-2 rounded-lg">
-            <h1 className="text-2xl font-bold">Portfolio Allocation</h1>
+            <div className="flex items-center gap-2 mb-2">
+              <Coins className="w-5 h-5 text-yellow-400" />
+              <h1 className="text-2xl font-bold text-white">
+                Portfolio Allocation
+              </h1>
+            </div>
             <div className="flex justify-center">
               <div className="w-80 h-80 relative">
                 <ResponsiveContainer width="100%" height="100%">
@@ -550,34 +612,26 @@ export default function VaultPage() {
                         />
                       ))}
                     </Pie>
-
                     <Tooltip
                       contentStyle={{
-                        background: "rgba(20, 20, 30, 0.9)",
-
-                        border: "1px solid rgba(255, 255, 255, 0.2)",
-
+                        background: "#232d3f",
+                        border: "1px solid #333",
                         borderRadius: "10px",
-
                         color: "#fff",
                       }}
                       itemStyle={{ color: "#eee" }}
                       formatter={(value: any, name: any, props: any) => [
                         `${value}%`,
-
                         `${name} - $${props.payload.usdValue.toLocaleString(
                           undefined,
-
                           { maximumFractionDigits: 0 }
                         )}`,
                       ]}
                     />
                   </PieChart>
                 </ResponsiveContainer>
-
                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                   <span className="text-white/60 text-sm">Total Value</span>
-
                   <span className="text-white font-bold text-2xl">
                     $
                     {totalValue.toLocaleString(undefined, {
@@ -589,7 +643,10 @@ export default function VaultPage() {
             </div>
           </div>
           <div className="bg-gray-900/60 p-8 px-10 flex flex-col gap-2 rounded-lg">
-            <h1 className="text-2xl font-bold">Tokens</h1>
+            <div className="flex items-center gap-2 mb-2">
+              <ListOrdered className="w-5 h-5 text-purple-400" />
+              <h1 className="text-2xl font-bold text-white">Tokens</h1>
+            </div>
             <div className="flex flex-col gap-2 mt-2">
               {filteredTokens.map((token) => (
                 <div
@@ -601,7 +658,14 @@ export default function VaultPage() {
                     alt={token.symbol}
                     className="w-4 h-4"
                   />
-                  <p>{token.symbol}</p>
+                  <span className="text-pink-400 font-bold flex items-center gap-1">
+                    {token.symbol}
+                    {token.valueUsd > 0 ? (
+                      <ArrowUpRight className="w-3 h-3 text-green-400" />
+                    ) : (
+                      <ArrowDownRight className="w-3 h-3 text-red-400" />
+                    )}
+                  </span>
                 </div>
               ))}
             </div>
@@ -609,40 +673,35 @@ export default function VaultPage() {
         </div>
         <div className="rounded-lg grid grid-cols-[1fr] gap-4">
           <div className="bg-gray-900/60 p-8 px-10 flex flex-col gap-2 rounded-lg">
-            <h1 className="text-2xl font-bold">Performance by Token</h1>
+            <div className="flex items-center gap-2 mb-2">
+              <TrendingUp className="w-5 h-5 text-blue-400" />
+              <h1 className="text-2xl font-bold text-white">
+                Performance by Token
+              </h1>
+            </div>
             <div className="overflow-x-auto mt-4 -mb-2">
               <table className="min-w-full text-sm text-left">
                 <thead className="text-white/60">
                   <tr>
                     <th className="p-2 text-left">Token</th>
-
                     <th className="p-2 text-right">Allocation (%)</th>
-
                     <th className="p-2 text-right">PnL (USD)</th>
-
                     <th className="p-2 text-right">Unrealized PnL (USD)</th>
-
                     <th className="p-2 text-right">Avg Entry Price</th>
-
                     <th className="p-2 text-right">Sold Avg Price</th>
-
                     <th className="p-2 text-right">Total Buys (USD)</th>
-
                     <th className="p-2 text-right">Total Sells (USD)</th>
                   </tr>
                 </thead>
-
                 <tbody>
                   {Object.entries(tokenPnL).map(([symbol, stats]) => (
                     <tr key={symbol} className="border-t border-white/10">
                       <td className="p-2 font-semibold">{symbol}</td>
-
-                      <td className="p-2 text-right">
+                      <td className="p-2 text-right text-yellow-400 font-bold">
                         {tokenAllocations[symbol]
                           ? `${tokenAllocations[symbol].percentage.toFixed(1)}%`
                           : "-"}
                       </td>
-
                       <td
                         className={`p-2 text-right font-bold ${
                           stats.pnl > 0
@@ -656,7 +715,6 @@ export default function VaultPage() {
                           maximumFractionDigits: 0,
                         })}
                       </td>
-
                       <td
                         className={`p-2 text-right font-bold ${
                           stats.unrealizedPnL > 0
@@ -670,20 +728,17 @@ export default function VaultPage() {
                           maximumFractionDigits: 0,
                         })}
                       </td>
-
                       <td className="p-2 text-right">
                         {stats.avgEntryPrice > 0
                           ? formatPriceWithSubscript(stats.avgEntryPrice)
                           : "-"}
                       </td>
-
                       <td className="p-2 text-right">
                         {stats.avgSellPrice > 0 ? (
                           <div className="flex flex-col items-end">
                             <div>
                               {formatPriceWithSubscript(stats.avgSellPrice)}
                             </div>
-
                             {stats.avgEntryPrice > 0 && (
                               <div
                                 className={`text-xs ${
@@ -705,13 +760,11 @@ export default function VaultPage() {
                           "-"
                         )}
                       </td>
-
                       <td className="p-2 text-right">
                         {stats.totalBuy.toLocaleString(undefined, {
                           maximumFractionDigits: 0,
                         })}
                       </td>
-
                       <td className="p-2 text-right">
                         {stats.totalSell.toLocaleString(undefined, {
                           maximumFractionDigits: 0,
