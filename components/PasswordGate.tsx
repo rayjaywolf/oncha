@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 
-const PASSWORD = "gravy";
+const PASSWORD = "oncha123";
 const STORAGE_KEY = "site_authenticated";
 
 export default function PasswordGate({
