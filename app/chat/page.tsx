@@ -182,16 +182,16 @@ export default function ChatPage() {
 
   return (
     <div className="bg-[#01010e] min-h-screen w-full flex flex-col font-sans text-gray-300">
-      <div className="flex-grow flex flex-col w-[60%] max-w-7xl mx-auto mt-20">
+      <div className="flex-grow flex flex-col w-full max-w-5xl mx-auto mt-8 sm:mt-20 px-2 sm:px-0">
         {messages.length === 0 ? (
-          <div className="flex-grow flex flex-col items-center justify-center text-center">
+          <div className="flex-grow flex flex-col items-center justify-center text-center px-2">
             <div className="bg-white p-3 rounded-xl shadow-lg mb-6">
               <Wind className="text-[#121212] h-8 w-8" />
             </div>
-            <h2 className="text-4xl font-bold text-white mb-3">
+            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">
               Welcome to Predictive Pulse
             </h2>
-            <p className="max-w-md text-gray-400">
+            <p className="max-w-md text-gray-400 text-base sm:text-lg">
               I analyze market data to spot trading opportunities. Give me a
               coin ticker (e.g., $SOL), a contract address, a DexScreener link,
               or upload an image to get started.
@@ -203,7 +203,7 @@ export default function ChatPage() {
             className="w-full flex-grow overflow-y-auto py-4 scroll-smooth"
             style={{ scrollBehavior: "smooth" }}
           >
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-3 sm:gap-4 px-1 sm:px-0">
               {messages.map((msg, index) => (
                 <div
                   key={index}
@@ -212,7 +212,7 @@ export default function ChatPage() {
                   }`}
                 >
                   <div
-                    className={`p-4 rounded-lg max-w-xl ${
+                    className={`p-3 sm:p-4 rounded-lg max-w-[90vw] sm:max-w-xl text-sm sm:text-base ${
                       msg.role === "user"
                         ? "bg-blue-600/30 text-white"
                         : "bg-[#1a1a24] text-gray-300"
@@ -233,7 +233,7 @@ export default function ChatPage() {
                           <img
                             src={msg.imageUrl}
                             alt="User upload"
-                            className="rounded-lg mb-2 max-w-xs"
+                            className="rounded-lg mb-2 max-w-[60vw] sm:max-w-xs"
                           />
                         )}
                         {msg.content}
@@ -245,7 +245,7 @@ export default function ChatPage() {
               <div ref={messagesEndRef} />
               {showLoader && (
                 <div className="flex justify-start">
-                  <div className="p-4 rounded-lg bg-[#1a1a24] text-gray-300">
+                  <div className="p-3 sm:p-4 rounded-lg bg-[#1a1a24] text-gray-300">
                     <Loader className="animate-spin h-5 w-5 text-blue-400" />
                   </div>
                 </div>
@@ -255,14 +255,14 @@ export default function ChatPage() {
         )}
       </div>
 
-      <footer className="w-full flex flex-col items-center pt-4 pb-6 sticky bottom-0 bg-[#01010e]">
-        <div className="w-[60%] max-w-7xl">
+      <footer className="w-full flex flex-col items-center pt-4 pb-6 sticky bottom-0 bg-[#01010e] px-2 sm:px-0">
+        <div className="w-full max-w-5xl">
           {imagePreview && (
             <div className="relative inline-block mb-2">
               <img
                 src={imagePreview}
                 alt="Selected preview"
-                className="h-24 w-24 object-cover rounded-lg"
+                className="h-20 w-20 sm:h-24 sm:w-24 object-cover rounded-lg"
               />
               <button
                 onClick={removeImage}
@@ -280,15 +280,13 @@ export default function ChatPage() {
               className="hidden"
               accept="image/png, image/jpeg, image/webp, image/heic, image/heif"
             />
-            <div
-              className="absolute left-5 top-1/2 -translate-y-1/2 flex items-center space-x-3;
-            |"
-            >
+            <div className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 flex items-center space-x-2 sm:space-x-3">
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="text-gray-400 hover:text-white disabled:opacity-50"
+                className="text-gray-400 hover:text-white disabled:opacity-50 p-2 sm:p-0"
                 disabled={isLoading}
+                aria-label="Upload image"
               >
                 <Image className="h-5 w-5" />
               </button>
@@ -298,21 +296,22 @@ export default function ChatPage() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask about an image or analyze $ETH, a contract address..."
-              className="w-full bg-[#282828] border border-gray-700 rounded-full py-4 pl-13 pr-16 text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full bg-[#282828] border border-gray-700 rounded-full py-3 sm:py-4 pl-12 sm:pl-13 pr-14 sm:pr-16 text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 text-base sm:text-lg"
               disabled={isLoading}
             />
             <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center">
               <button
                 type="submit"
-                className="bg-gradient-to-br from-blue-500 to-purple-600 p-2.5 rounded-full text-white hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                className="bg-gradient-to-br from-blue-500 to-purple-600 p-2.5 rounded-full text-white hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-base sm:text-lg"
                 disabled={(!input.trim() && !imageFile) || isLoading}
+                aria-label="Send message"
               >
                 <ArrowUpRight className="h-5 w-5" />
               </button>
             </div>
           </form>
         </div>
-        <p className="text-xs text-gray-600 mt-3">
+        <p className="text-xs text-gray-600 mt-3 text-center px-2">
           Predictive Pulse AI may produce incorrect analysis. Always do your own
           research.
         </p>

@@ -4,6 +4,7 @@ import HeroVideoDialog from "@/components/magicui/hero-video-dialog";
 import { AvatarCircles } from "@/components/magicui/avatar-circles";
 import { ArrowRight, Cable, ShieldCheck, Zap } from "lucide-react";
 import Footer from "@/components/ui/footer";
+import Link from "next/link";
 
 const avatars = [
   {
@@ -35,49 +36,75 @@ const avatars = [
 export default function Home() {
   return (
     <div className="bg-[#01010e]">
-      <div className="h-screen w-full flex flex-col items-center justify-center gap-6 relative overflow-hidden">
+      <div className="min-h-screen w-full flex flex-col items-center justify-center gap-6 relative overflow-hidden">
         <div className="absolute flex items-center justify-center top-0 left-0 w-full h-full z-0 opacity-100">
-          <Image src="/element.avif" alt="" width={850} height={850} />
+          <Image
+            src="/element.avif"
+            alt=""
+            width={850}
+            height={850}
+            className="w-full max-w-[850px] h-auto"
+          />
         </div>
         <div className="absolute bottom-0 left-0 z-0 opacity-80">
-          <Image src="/lines.avif" alt="" width={500} height={500} />
+          <Image
+            src="/lines.avif"
+            alt=""
+            width={500}
+            height={500}
+            className="w-40 sm:w-60 md:w-[500px] h-auto"
+          />
         </div>
         <div className="absolute bottom-0 right-0 z-0 opacity-80 scale-x-[-1]">
-          <Image src="/lines.avif" alt="" width={500} height={500} />
+          <Image
+            src="/lines.avif"
+            alt=""
+            width={500}
+            height={500}
+            className="w-40 sm:w-60 md:w-[500px] h-auto"
+          />
         </div>
-        <div className="flex flex-col items-center justify-center gap-8 z-10 -mt-20">
+        <div className="flex flex-col items-center justify-center gap-8 z-10 -mt-10 md:-mt-20 px-4">
           <div className="group rounded-full border border-white/10 bg-white/5 backdrop-blur-sm mb-4">
-            <AnimatedShinyText className="inline-flex items-center justify-center px-4 py-1.5 text-sm text-white/70">
+            <AnimatedShinyText className="inline-flex items-center justify-center px-4 py-1.5 text-xs sm:text-sm text-white/70">
               ✨ AI-Powered Trading Platform
             </AnimatedShinyText>
           </div>
-          <h1 className="text-white text-7xl font-bold">
+          <h1 className="text-white text-3xl sm:text-5xl md:text-7xl font-bold text-center">
             Trade Smarter with AI
           </h1>
-          <p className="text-white/80 text-lg font-regular max-w-[500px] text-center leading-6">
+          <p className="text-white/80 text-base sm:text-lg font-regular max-w-[90vw] sm:max-w-[500px] text-center leading-6">
             Make informed trading decisions with real-time market analysis and
             precise recommendations powered by advanced AI.
           </p>
-          <div className="flex items-center mt-4 gap-4">
-            <button className="bg-white text-black px-4 py-2 rounded-md font-regular">
-              Get Started
-            </button>
-            <button className="bg-transparent border border-white text-white px-4 py-2 rounded-md font-regular hover:bg-white/10 transition">
+          <div className="flex flex-col sm:flex-row items-center justify-center mt-4 gap-4 w-full max-w-xs sm:max-w-none">
+            <Link href="/chat" passHref legacyBehavior>
+              <a className="bg-white text-black px-4 py-2 rounded-md font-regular w-full sm:w-auto text-center">
+                Get Started
+              </a>
+            </Link>
+            <a
+              href="#features"
+              className="bg-transparent border border-white text-white px-4 py-2 rounded-md font-regular hover:bg-white/10 transition w-full sm:w-auto text-center"
+            >
               See Features
-            </button>
+            </a>
           </div>
         </div>
       </div>
 
-      <div className="z-9 w-full overflow-hidden flex flex-col justify-center items-center -mt-70 pb-10 relative rounded-b-4xl">
+      <div
+        id="features"
+        className="z-9 w-full overflow-hidden flex flex-col justify-center items-center -mt-40 md:-mt-70 pb-10 relative rounded-b-4xl"
+      >
         <Image
           src="/hero.png"
           alt=""
           width={4110}
           height={2441}
-          className="w-[90%] h-auto z-10"
+          className="w-full sm:w-[90%] h-auto z-10"
         />
-        <div className="grid grid-cols-3 gap-4 max-w-[70%] mx-auto my-20">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-[95vw] md:max-w-[70%] mx-auto my-10 md:my-20 px-2">
           <div className="p-4 flex flex-col gap-2">
             <h3 className="flex gap-2 text-white text-md font-bold items-center">
               <Zap className="w-4 h-4" /> Hardware Free
@@ -109,25 +136,25 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="w-full h-full py-20">
-        <h1 className="text-white text-5xl font-regular text-center mb-10">
+      <div className="w-full h-full py-10 md:py-20">
+        <h1 className="text-white text-3xl sm:text-5xl font-regular text-center mb-6 md:mb-10">
           Multitude of Tools
         </h1>
         <div className="flex flex-col gap-10">
-          <div className="flex flex-col gap-4 max-w-[75%] mx-auto">
-            <div className="h-full w-full border-1 border-white/10   rounded-2xl grid grid-cols-2">
-              <div className="flex flex-col py-4 px-8">
-                <h3 className="font-bold mb-8 text-xl text-blue-300">
+          <div className="flex flex-col gap-4 max-w-[98vw] md:max-w-[75%] mx-auto">
+            <div className="h-full w-full border-1 border-white/10 rounded-2xl grid grid-cols-1 md:grid-cols-2">
+              <div className="flex flex-col py-4 px-4 md:px-8">
+                <h3 className="font-bold mb-4 md:mb-8 text-lg md:text-xl text-blue-300">
                   Predictive Pulse AI
                 </h3>
-                <h1 className="text-white text-4xl font-regular mb-4">
+                <h1 className="text-white text-2xl md:text-4xl font-regular mb-2 md:mb-4">
                   Get trading signals and insights with AI-powered chart
                   analysis.
                 </h1>
-                <button className="bg-white text-black px-2 py-1 rounded-full font-regular w-1/4 mt-4 flex items-center justify-center gap-2">
+                <button className="bg-white text-black px-2 py-1 rounded-full font-regular w-full md:w-1/4 mt-4 flex items-center justify-center gap-2">
                   Try Now <ArrowRight className="w-4 h-4" />
                 </button>
-                <div className="grid grid-cols-2 gap-0 mt-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-0 mt-8">
                   {[
                     {
                       title: "Real-time Analysis",
@@ -178,24 +205,24 @@ export default function Home() {
                 </div>
               </div>
               <div className="flex justify-center items-center p-4">
-                <div className="group bg-gradient-to-t from-[#05070a] to-[#0b1a3b] h-full w-full hover:from-[#05070a] hover:to-[#0b1a3b] relative before:absolute before:inset-0 before:bg-[url('/noise.gif')] before:opacity-5 rounded-2xl border border-white/10"></div>
+                <div className="group bg-gradient-to-t from-[#05070a] to-[#0b1a3b] h-40 sm:h-full w-full hover:from-[#05070a] hover:to-[#0b1a3b] relative before:absolute before:inset-0 before:bg-[url('/noise.gif')] before:opacity-5 rounded-2xl border border-white/10"></div>
               </div>
             </div>
           </div>
-          <div className="flex flex-col gap-4 max-w-[75%] mx-auto">
-            <div className="h-full w-full border-1 border-white/10 rounded-2xl grid grid-cols-2">
-              <div className="flex flex-col py-4 px-8">
-                <h3 className="font-bold mb-8 text-xl text-red-300">
+          <div className="flex flex-col gap-4 max-w-[98vw] md:max-w-[75%] mx-auto">
+            <div className="h-full w-full border-1 border-white/10 rounded-2xl grid grid-cols-1 md:grid-cols-2">
+              <div className="flex flex-col py-4 px-4 md:px-8">
+                <h3 className="font-bold mb-4 md:mb-8 text-lg md:text-xl text-red-300">
                   Aegis Rug-Pull Shield
                 </h3>
-                <h1 className="text-white text-4xl font-regular mb-4">
+                <h1 className="text-white text-2xl md:text-4xl font-regular mb-2 md:mb-4">
                   Identify and avoid rug pulls with our advanced early warning
                   system
                 </h1>
-                <button className="bg-white text-black px-2 py-1 rounded-full font-regular w-1/4 mt-4 flex items-center justify-center gap-2">
+                <button className="bg-white text-black px-2 py-1 rounded-full font-regular w-full md:w-1/4 mt-4 flex items-center justify-center gap-2">
                   Try Now <ArrowRight className="w-4 h-4" />
                 </button>
-                <div className="grid grid-cols-2 gap-0 mt-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-0 mt-8">
                   {[
                     {
                       title: "Early Warning System",
@@ -246,24 +273,24 @@ export default function Home() {
                 </div>
               </div>
               <div className="flex justify-center items-center p-4">
-                <div className="group bg-gradient-to-t from-[#141414] to-[#2b131e] h-full w-full hover:from-[#141414] hover:to-[#2b131e] relative before:absolute before:inset-0 before:bg-[url('/noise.gif')] before:opacity-5 rounded-2xl border border-white/10"></div>
+                <div className="group bg-gradient-to-t from-[#141414] to-[#2b131e] h-40 sm:h-full w-full hover:from-[#141414] hover:to-[#2b131e] relative before:absolute before:inset-0 before:bg-[url('/noise.gif')] before:opacity-5 rounded-2xl border border-white/10"></div>
               </div>
             </div>
           </div>
-          <div className="flex flex-col gap-4 max-w-[75%] mx-auto">
-            <div className="h-full w-full border-1 border-white/10   rounded-2xl grid grid-cols-2">
-              <div className="flex flex-col py-4 px-8">
-                <h3 className="font-bold mb-8 text-xl text-emerald-300">
+          <div className="flex flex-col gap-4 max-w-[98vw] md:max-w-[75%] mx-auto">
+            <div className="h-full w-full border-1 border-white/10 rounded-2xl grid grid-cols-1 md:grid-cols-2">
+              <div className="flex flex-col py-4 px-4 md:px-8">
+                <h3 className="font-bold mb-4 md:mb-8 text-lg md:text-xl text-emerald-300">
                   The Vault
                 </h3>
-                <h1 className="text-white text-4xl font-regular mb-4">
+                <h1 className="text-white text-2xl md:text-4xl font-regular mb-2 md:mb-4">
                   Track your portfolio and get detailed insights on your
                   investments
                 </h1>
-                <button className="bg-white text-black px-2 py-1 rounded-full font-regular w-1/4 mt-4 flex items-center justify-center gap-2">
+                <button className="bg-white text-black px-2 py-1 rounded-full font-regular w-full md:w-1/4 mt-4 flex items-center justify-center gap-2">
                   Try Now <ArrowRight className="w-4 h-4" />
                 </button>
-                <div className="grid grid-cols-2 gap-0 mt-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-0 mt-8">
                   {[
                     {
                       title: "Unified Dashboard",
@@ -314,17 +341,19 @@ export default function Home() {
                 </div>
               </div>
               <div className="flex justify-center items-center p-4">
-                <div className="group bg-gradient-to-t from-[#080808] to-emerald-900 h-full w-full hover:from-[#080808] hover:to-emerald-900 relative before:absolute before:inset-0 before:bg-[url('/noise.gif')] before:opacity-5 rounded-2xl border border-white/10"></div>
+                <div className="group bg-gradient-to-t from-[#080808] to-emerald-900 h-40 sm:h-full w-full hover:from-[#080808] hover:to-emerald-900 relative before:absolute before:inset-0 before:bg-[url('/noise.gif')] before:opacity-5 rounded-2xl border border-white/10"></div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="w-full h-full pb-20 max-w-[75%] mx-auto">
-        <h1 className="text-5xl text-center mb-10">How it works</h1>
+      <div className="w-full h-full pb-10 md:pb-20 max-w-[98vw] md:max-w-[75%] mx-auto">
+        <h1 className="text-3xl md:text-5xl text-center mb-6 md:mb-10">
+          How it works
+        </h1>
         <HeroVideoDialog
-          className="block dark:hidden"
+          className="block dark:hidden w-full max-w-full aspect-video"
           animationStyle="from-center"
           videoSrc="https://www.youtube.com/embed/qh3NGpYRG3I?si=4rb-zSdDkVK9qxxb"
           thumbnailSrc="https://startup-template-sage.vercel.app/hero-light.png"
@@ -332,21 +361,21 @@ export default function Home() {
         />
       </div>
 
-      <div className="h-full max-w-[75%] mx-auto pb-10">
-        <div className="h-full rounded-xl bg-gradient-to-br from-blue-900 to-blue-300 flex flex-col items-center justify-center gap-6 py-16 relative overflow-hidden">
-          <h1 className="text-4xl font-regular text-white z-10">
+      <div className="h-full max-w-[98vw] md:max-w-[75%] mx-auto pb-10">
+        <div className="h-full rounded-xl bg-gradient-to-br from-blue-900 to-blue-300 flex flex-col items-center justify-center gap-6 py-10 md:py-16 relative overflow-hidden px-2">
+          <h1 className="text-2xl md:text-4xl font-regular text-white z-10">
             Join Our Community
           </h1>
-          <p className="text-white/80 text-md font-regular text-center max-w-[400px] z-10">
+          <p className="text-white/80 text-sm md:text-md font-regular text-center max-w-[90vw] md:max-w-[400px] z-10">
             Join our social media channels to stay updated with the latest news,
             updates, and community discussions.
           </p>
           <AvatarCircles numPeople={99} avatarUrls={avatars} className="z-10" />
-          <div className="flex items-center mt-4 gap-2 z-10">
-            <button className="bg-white text-black px-4 py-2 rounded-full font-regular flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row items-center mt-4 gap-2 z-10 w-full max-w-xs sm:max-w-none">
+            <button className="bg-white text-black px-4 py-2 rounded-full font-regular flex items-center gap-2 w-full sm:w-auto">
               Telegram <ArrowRight className="inline w-4 h-4" />
             </button>
-            <button className="bg-transparent border border-white text-white px-4 py-2 rounded-full font-regular flex items-center gap-2 hover:bg-white/10 transition">
+            <button className="bg-transparent border border-white text-white px-4 py-2 rounded-full font-regular flex items-center gap-2 hover:bg-white/10 transition w-full sm:w-auto">
               Twitter <ArrowRight className="inline w-4 h-4" />
             </button>
           </div>
