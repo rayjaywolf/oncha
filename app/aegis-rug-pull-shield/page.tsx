@@ -2,7 +2,14 @@
 
 import React, { useState } from "react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
-import { AlertTriangle, Search, SquareArrowOutUpRight } from "lucide-react";
+import {
+  AlertTriangle,
+  Search,
+  SquareArrowOutUpRight,
+  Coins,
+  TrendingUp,
+  PieChart as LucidePieChart, // Add this import
+} from "lucide-react";
 
 const DEFAULT_TOKEN = "ArpNuJM43As8iYMPKNJwAf2YAcxfusJ7uasp7eHXpump";
 const COLORS = [
@@ -106,9 +113,12 @@ export default function AegisRugPullShield() {
       : 0;
 
   return (
-    <div className="h-full bg-[#01010e] text-gray-200 font-sans flex flex-col items-center pt-25 pb-10">
-      <div className="w-full max-w-5xl mx-auto flex flex-col gap-4">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-2 bg-gray-900/60 p-4 rounded-lg">
+    <div className="min-h-screen bg-[#10101a] text-white font-sans flex flex-col items-center pt-24 pb-10 relative overflow-hidden">
+      <div className="absolute inset-0 flex justify-center items-center blur-[120px] md:blur-[180px] z-0 pointer-events-none">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] md:w-[800px] md:h-[1000px] opacity-80 md:opacity-5 [background-image:conic-gradient(from_180deg_at_50%_50%,#0aefff_0deg,#0f83ff_60deg,#4f46e5_120deg,#a84ddf_180deg,#00ffb8_240deg,#00cfff_300deg,#6a5acd_360deg)]"></div>
+      </div>
+      <div className="w-full max-w-[90%] mx-auto flex flex-col gap-2 relative z-10">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-2 rounded-lg pt-4 pb-4">
           <input
             type="text"
             className="w-full px-4 py-2 rounded-full bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -118,7 +128,7 @@ export default function AegisRugPullShield() {
             disabled={loading}
           />
           <button
-            className="w-full sm:w-auto mt-2 sm:mt-0 px-6 py-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-semibold transition disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full sm:w-auto mt-2 sm:mt-0 px-6 py-2 rounded-full bg-red-600 hover:bg-red-700 text-white font-semibold transition disabled:opacity-60 disabled:cursor-not-allowed"
             onClick={() => {
               if (walletInput) {
                 setTokenAddress(walletInput);
@@ -132,90 +142,146 @@ export default function AegisRugPullShield() {
             {loading ? "Analyzing..." : "Analyze"}
           </button>
         </div>
-        <div className="grid grid-cols-[1fr_2fr] gap-4">
-          <div className="flex flex-col items-center justify-center gap-4 bg-gray-900/60 p-8 rounded-lg">
-            <h1 className="text-white text-3xl font-bold text-center">
-              Risk Score
-            </h1>
-            <h1 className="text-white text-7xl font-bold text-center">
+        {/* Risk Score and Token Info Cards */}
+        <div className="grid grid-cols-[1fr_2fr] gap-2">
+          <div className="p-8 px-10 flex flex-col gap-2 rounded-lg bg-gray-900/60 backdrop-blur-lg border border-white/20 items-center justify-center">
+            <div className="flex items-center justify-center gap-2 mb-1">
+              <AlertTriangle className="w-5 h-5 text-yellow-400" />
+              <h1 className="text-xl font-bold text-white">Risk Score</h1>
+            </div>
+            <h1 className="text-7xl font-bold text-yellow-400 text-center">
               {rugcheckSummary?.score_normalised}
             </h1>
-            <p className="text-gray-200 text-lg w-3/4 text-center mx-auto">
+            <p className="text-gray-400 text-base text-center">
               The risk score is a measure of the risk of the token being a rug
             </p>
           </div>
-          <div className="flex gap-2 bg-gray-900/60 p-8 rounded-lg">
-            <div className="flex flex-col gap-4 w-1/2 items-center justify-center">
+          <div className="bg-gray-900/60 backdrop-blur-lg border border-white/20 p-8 px-10 flex flex-row gap-8 rounded-lg">
+            <div className="flex flex-col gap-2 items-center justify-center w-1/3">
               <img
                 src={rugcheck?.fileMeta?.image}
                 alt={rugcheck?.fileMeta?.name}
-                className="w-24 h-24 rounded-full border-2 border-gray-600"
+                className="w-20 h-20 rounded-full border-2 border-gray-700 bg-gray-800 object-cover"
               />
-              <h1 className="text-white text-3xl font-bold text-center">
+              <h1 className="text-white text-2xl font-bold text-center mt-2">
                 {rugcheck?.fileMeta?.name}
               </h1>
-              <span className="text-gray-400 text-xl text-left">
+              <span className="text-gray-400 text-lg text-center font-semibold">
                 ({rugcheck?.fileMeta?.symbol})
               </span>
             </div>
-            <div className="flex flex-col gap-4 w-1/2 justify-center">
-              <h2 className="flex items-center gap-2">
-                Creator:{" "}
-                <span className="text-gray-400">
-                  {`${rugcheck?.creator.slice(
-                    0,
-                    10
-                  )}......${rugcheck?.creator.slice(-10)}`}
+            <div className="flex flex-col gap-2 w-2/3 justify-center">
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-blue-400">Creator:</span>
+                <div className="flex items-center gap-1">
+                  {rugcheck?.creator ? (
+                    <>
+                      <a
+                        href={`https://solscan.io/account/${rugcheck.creator}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-gray-400 font-mono text-xs hover:text-blue-400 hover:underline cursor-pointer"
+                      >
+                        {rugcheck.creator}
+                      </a>
+                      <a
+                        href={`https://dexscreener.com/solana/${rugcheck.creator}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <SquareArrowOutUpRight
+                          size={16}
+                          className="text-gray-400 hover:text-blue-400"
+                        />
+                      </a>
+                    </>
+                  ) : (
+                    <span className="text-gray-400">-</span>
+                  )}
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-blue-400">Mint:</span>
+                <div className="flex items-center gap-1">
+                  {rugcheck?.mint ? (
+                    <>
+                      <a
+                        href={`https://solscan.io/account/${rugcheck.mint}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-gray-400 font-mono text-xs hover:text-blue-400 hover:underline cursor-pointer"
+                      >
+                        {rugcheck.mint}
+                      </a>
+                      <a
+                        href={`https://dexscreener.com/solana/${rugcheck.mint}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <SquareArrowOutUpRight
+                          size={16}
+                          className="text-gray-400 hover:text-blue-400"
+                        />
+                      </a>
+                    </>
+                  ) : (
+                    <span className="text-gray-400">-</span>
+                  )}
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-yellow-400">Supply:</span>
+                <span className="text-gray-400">{totalSupply || "-"}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-green-400">Market Cap:</span>
+                <span className="text-gray-400">${mcap || "-"}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-purple-400">
+                  Creator Balance:
                 </span>
-                <SquareArrowOutUpRight size={16} color="gray" />
-              </h2>
-              <h2 className="flex items-center gap-2">
-                Mint:{" "}
                 <span className="text-gray-400">
-                  {`${rugcheck?.mint.slice(0, 10)}......${rugcheck?.mint.slice(
-                    -10
-                  )}`}
+                  {rugcheck?.creatorBalance !== undefined
+                    ? rugcheck?.creatorBalance.toLocaleString()
+                    : "-"}
                 </span>
-                <SquareArrowOutUpRight size={16} color="gray" />
-              </h2>
-              <h2 className="flex items-center gap-2">
-                Supply: <span className="text-gray-400">{totalSupply}</span>
-              </h2>
-              <h2 className="flex items-center gap-2">
-                Market Cap: <span className="text-gray-400">${mcap}</span>
-              </h2>
-              <h2 className="flex items-center gap-2">
-                Creator Balance:{" "}
-                <span className="text-gray-400">
-                  {rugcheck?.creatorBalance.toLocaleString()}
-                </span>
-              </h2>
+              </div>
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-[1fr] gap-4 h-full">
-          <div className="flex flex-col items-center justify-center gap-4 bg-gray-900/60 p-8 rounded-lg">
-            <h1 className="text-white text-3xl font-bold text-center mb-2">
-              AI Risk Analysis
-            </h1>
-            <ul className="space-y-1 text-lg list-disc list-inside text-yellow-200/80">
-              {rugcheck &&
-                rugcheck.risks &&
-                rugcheck.risks.length > 0 &&
-                rugcheck.risks.map((risk: any, idx: number) => (
-                  <li key={idx}>
-                    <span className="font-bold">{risk.name}</span> ({risk.level}
-                    ): {risk.description}
-                  </li>
-                ))}
-            </ul>
+        {/* AI Risk Analysis Card */}
+        <div className="bg-gray-900/60 backdrop-blur-lg border border-white/20 p-8 px-10 flex flex-col gap-2 rounded-lg">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <AlertTriangle className="w-5 h-5 text-yellow-400" />
+            <h1 className="text-2xl font-bold text-white">AI Risk Analysis</h1>
           </div>
+          {rugcheck && rugcheck.risks && rugcheck.risks.length > 0 ? (
+            <ul className="space-y-1 text-base list-disc list-inside text-yellow-200/80 text-center">
+              {rugcheck.risks.map((risk: any, idx: number) => (
+                <li key={idx}>
+                  <span className="font-bold">{risk.name}</span> ({risk.level}
+                  ): {risk.description}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-center text-green-400 font-semibold text-lg">
+              All Good ✅
+            </p>
+          )}
         </div>
-        <div className="grid grid-cols-[1fr_1fr] gap-4 h-full">
-          <div className="flex flex-col items-center justify-center gap-4 bg-gray-900/60 p-8 rounded-lg">
-            <h1 className="text-white text-3xl font-bold text-center">
-              Token Distribution
-            </h1>
+
+        {/* Token Distribution & Liquidity Pools */}
+        <div className="grid grid-cols-[1fr_1fr] gap-2 h-full">
+          {/* Token Distribution Card */}
+          <div className="bg-gray-900/60 backdrop-blur-lg border border-white/20 p-8 px-10 flex flex-col gap-2 rounded-lg items-center">
+            <div className="flex items-center gap-2 mb-2">
+              <LucidePieChart className="w-6 h-6 text-yellow-400" />{" "}
+              <h1 className="text-2xl font-bold text-white">
+                Token Distribution
+              </h1>
+            </div>
             <div className="relative w-full h-72">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -225,9 +291,9 @@ export default function AegisRugPullShield() {
                     nameKey="name"
                     cx="50%"
                     cy="50%"
-                    innerRadius={60}
-                    outerRadius={100}
-                    paddingAngle={2}
+                    innerRadius={95}
+                    outerRadius={135}
+                    paddingAngle={3}
                     labelLine={false}
                   >
                     {pieData.map((entry, idx) => (
@@ -244,9 +310,10 @@ export default function AegisRugPullShield() {
                   </Pie>
                   <Tooltip
                     contentStyle={{
-                      background: "rgba(20, 20, 30, 0.8)",
-                      border: "1px solid rgba(255, 255, 255, 0.2)",
+                      background: "#232d3f",
+                      border: "1px solid #333",
                       borderRadius: "10px",
+                      color: "#fff",
                     }}
                     itemStyle={{ color: "#eee" }}
                     formatter={(value: any, name: any) => [`${value}%`, name]}
@@ -261,58 +328,63 @@ export default function AegisRugPullShield() {
               </div>
             </div>
           </div>
-          <div className="flex gap-2 bg-gray-900/60 p-8 rounded-lg">
-            <div className="flex flex-col gap-4 w-full">
-              {liquidityPools.length > 0 && (
-                <div className="flex flex-col gap-4 items-center justify-center">
-                  <h3 className="text-white text-3xl font-semibold mb-4 flex items-center gap-2 text-center">
-                    Liquidity Pools
-                  </h3>
-                  <div className="flex flex-col gap-3 w-full">
-                    {liquidityPools.map((lp, idx) => (
-                      <div
-                        key={lp.pairAddress}
-                        className="bg-gray-900/60 p-3 rounded-lg flex items-center justify-between"
-                      >
-                        <div className="flex items-center gap-3">
-                          {lp.exchangeLogo && (
-                            <img
-                              src={lp.exchangeLogo}
-                              alt={lp.exchangeName}
-                              className="w-6 h-6 rounded-full"
-                            />
-                          )}
-                          <div>
-                            <span className="text-white font-semibold">
-                              {lp.exchangeName}
-                            </span>
-                            <span className="text-gray-400 ml-2">
-                              {lp.pairLabel}
-                            </span>
-                          </div>
-                        </div>
-                        <div className="text-white font-bold">
-                          $
-                          {Number(lp.liquidityUsd).toLocaleString(undefined, {
-                            maximumFractionDigits: 0,
-                          })}
-                        </div>
+          {/* Liquidity Pools Card */}
+          <div className="bg-gray-900/60 backdrop-blur-lg border border-white/20 p-8 px-10 flex flex-col gap-2 rounded-lg">
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <Coins className="w-5 h-5 text-yellow-400" />
+              <h1 className="text-2xl font-bold text-white">Liquidity Pools</h1>
+            </div>
+            <div className="flex flex-col gap-3 w-full mt-2">
+              {liquidityPools.length > 0 ? (
+                liquidityPools.map((lp, idx) => (
+                  <div
+                    key={lp.pairAddress}
+                    className="bg-gray-800/60 p-3 rounded-lg flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-3">
+                      {lp.exchangeLogo && (
+                        <img
+                          src={lp.exchangeLogo}
+                          alt={lp.exchangeName}
+                          className="w-6 h-6 rounded-full"
+                        />
+                      )}
+                      <div>
+                        <span className="text-white font-semibold">
+                          {lp.exchangeName}
+                        </span>
+                        <span className="text-gray-400 ml-2">
+                          {lp.pairLabel}
+                        </span>
                       </div>
-                    ))}
+                    </div>
+                    <div className="text-white font-bold">
+                      $
+                      {Number(lp.liquidityUsd).toLocaleString(undefined, {
+                        maximumFractionDigits: 0,
+                      })}
+                    </div>
                   </div>
-                </div>
+                ))
+              ) : (
+                <span className="text-gray-400">No liquidity pools found.</span>
               )}
             </div>
           </div>
         </div>
+
+        {/* Top 10 Holders Distribution Table */}
         <div className="grid grid-cols-[1fr] gap-4 h-full">
-          <div className="flex flex-col items-center justify-center gap-4 bg-gray-900/60 p-8 pb-4 rounded-lg">
-            <h1 className="text-white text-3xl font-bold text-center mb-2">
-              Top 10 Holders Distribution
-            </h1>
-            <div className="overflow-x-auto w-full h-full">
+          <div className="bg-gray-900/60 backdrop-blur-lg border border-white/20 p-8 px-10 flex flex-col gap-2 rounded-lg">
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <TrendingUp className="w-5 h-5 text-blue-400" />
+              <h1 className="text-2xl font-bold text-white">
+                Top 10 Holders Distribution
+              </h1>
+            </div>
+            <div className="overflow-x-auto w-full h-full mt-2">
               <table className="w-full text-sm text-left">
-                <thead className="text-gray-400">
+                <thead className="text-white/60">
                   <tr>
                     <th className="p-3 font-semibold">Rank</th>
                     <th className="p-3 font-semibold">Address</th>
@@ -328,11 +400,18 @@ export default function AegisRugPullShield() {
                   {holders[0] && (
                     <tr
                       key={holders[0].ownerAddress}
-                      className="border-t border-gray-800 hover:bg-gray-900/50"
+                      className="border-t border-white/10 hover:bg-gray-800/60"
                     >
                       <td className="p-3"></td>
-                      <td className="p-3 font-mono text-xs text-blue-300">
-                        Liquidity Pool
+                      <td className="p-3">
+                        <a
+                          href={`https://solscan.io/account/${holders[0].ownerAddress}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-mono text-xs text-blue-300 hover:text-blue-400 hover:underline"
+                        >
+                          Liquidity Pool
+                        </a>
                       </td>
                       <td className="p-3 text-right text-white font-medium">
                         {parseInt(holders[0].balanceFormatted).toLocaleString()}
@@ -353,15 +432,22 @@ export default function AegisRugPullShield() {
                     holders.slice(1, 11).map((holder, idx) => (
                       <tr
                         key={holder.ownerAddress}
-                        className="border-t border-gray-800 hover:bg-gray-900/50"
+                        className="border-t border-white/10 hover:bg-gray-800/60"
                       >
                         <td className="p-3">
                           <span className="font-bold text-white">
                             {idx + 1}
                           </span>
                         </td>
-                        <td className="p-3 font-mono text-xs text-blue-300">
-                          {holder.ownerAddress}
+                        <td className="p-3">
+                          <a
+                            href={`https://solscan.io/account/${holder.ownerAddress}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="font-mono text-xs text-blue-300 hover:text-blue-400 hover:underline"
+                          >
+                            {holder.ownerAddress}
+                          </a>
                         </td>
                         <td className="p-3 text-right text-white font-medium">
                           {parseInt(holder.balanceFormatted).toLocaleString()}

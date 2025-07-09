@@ -484,10 +484,13 @@ export default function VaultPage() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen pt-24 pb-10 bg-[#10101a]">
-      <div className="flex flex-col gap-4 w-full max-w-5xl">
+    <div className="flex flex-col items-center pt-24 pb-10 relative overflow-hidden min-h-screen bg-[#10101a]">
+      <div className="absolute inset-0 flex justify-center items-center blur-[120px] md:blur-[180px] z-0 pointer-events-none">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] md:w-[800px] md:h-[1000px] opacity-80 md:opacity-5 [background-image:conic-gradient(from_180deg_at_50%_50%,#0aefff_0deg,#0f83ff_60deg,#4f46e5_120deg,#a84ddf_180deg,#00ffb8_240deg,#00cfff_300deg,#6a5acd_360deg)]"></div>
+      </div>
+      <div className="flex flex-col gap-2 w-full max-w-[90%]">
         <form
-          className="grid grid-cols-[7fr_1fr] gap-2 w-full bg-gray-900/60 rounded-lg p-4"
+          className="grid grid-cols-[7fr_1fr] gap-2 w-full  rounded-lg py-4"
           onSubmit={handleSubmit}
         >
           <input
@@ -507,34 +510,34 @@ export default function VaultPage() {
             {loading ? "Loading..." : "Submit"}
           </button>
         </form>
-        <div className="rounded-lg bg-gray-900/60 flex flex-col">
-          <div className="grid grid-cols-[1fr_1fr_1fr] w-full max-w-5xl">
+        <div className="rounded-lg bg-gray-900/60 backdrop-blur-lg border border-white/20 flex flex-col">
+          <div className="grid grid-cols-[1fr_1fr_1fr] w-full">
             {/* Stat Card */}
             <div className="p-8 px-10 flex flex-col gap-2 relative">
-              <div className="flex items-center gap-2 mb-1">
+              <div className="flex items-center justify-center gap-2 mb-1">
                 <DollarSign className="w-5 h-5 text-blue-400" />
                 <h1 className="text-xl font-bold text-white">
                   Total Portfolio Value
                 </h1>
               </div>
-              <h1 className="text-4xl font-bold text-cyan-400">
+              <h1 className="text-4xl font-bold text-cyan-400 text-center">
                 $
                 {totalValue.toLocaleString(undefined, {
                   maximumFractionDigits: 0,
                 })}
               </h1>
-              <p className="text-gray-400">
+              <p className="text-gray-400 text-center">
                 Last 24h: {portfolio?.change24h?.percentage.toFixed(2)}%
               </p>
               <div className="absolute right-0 h-2/3 w-px bg-gray-800" />
             </div>
             <div className="p-8 px-10 flex flex-col gap-2 relative">
-              <div className="flex items-center gap-2 mb-1">
+              <div className="flex items-center justify-center gap-2 mb-1">
                 <TrendingUp className="w-5 h-5 text-green-400" />
-                <h1 className="text-xl font-bold text-white">Realized PnL</h1>
+                <h1 className="text-xl font-bold text-white ">Realized PnL</h1>
               </div>
               <h1
-                className={`text-4xl font-bold ${
+                className={`text-4xl font-bold text-center ${
                   pnl && pnl > 0
                     ? "text-green-400"
                     : pnl && pnl < 0
@@ -544,18 +547,18 @@ export default function VaultPage() {
               >
                 ${pnl?.toLocaleString(undefined, { maximumFractionDigits: 0 })}
               </h1>
-              <p className="text-gray-400">
+              <p className="text-gray-400 text-center">
                 Last 24h: {portfolio?.change24h?.percentage.toFixed(2)}%
               </p>
               <div className="absolute right-0 h-2/3 w-px bg-gray-800" />
             </div>
             <div className="p-8 px-10 flex flex-col gap-2">
-              <div className="flex items-center gap-2 mb-1">
+              <div className="flex items-center justify-center gap-2 mb-1">
                 <TrendingDown className="w-5 h-5 text-yellow-400" />
                 <h1 className="text-xl font-bold text-white">Unrealized PnL</h1>
               </div>
               <h1
-                className={`text-4xl font-bold ${
+                className={`text-4xl font-bold text-center ${
                   totalUnrealizedPnL > 0
                     ? "text-emerald-400"
                     : totalUnrealizedPnL < 0
@@ -568,15 +571,15 @@ export default function VaultPage() {
                   maximumFractionDigits: 0,
                 })}
               </h1>
-              <p className="text-gray-400">
+              <p className="text-gray-400 text-center">
                 Last 24h: {portfolio?.change24h?.percentage.toFixed(2)}%
               </p>
             </div>
           </div>
           <hr className="w-[90%] pt-4 mx-auto border-gray-800" />
-          <div className="pb-6 grid grid-cols-[1fr_1fr_1fr] w-full max-w-5xl">
+          <div className="pb-6 grid grid-cols-[1fr_1fr_1fr] w-full">
             <div className="px-10 flex flex-col gap-2 relative">
-              <p className="text-left">
+              <p className="text-center">
                 Win Rate:{" "}
                 <span
                   className={`font-bold ${
@@ -601,7 +604,7 @@ export default function VaultPage() {
               </p>
             </div>
             <div className="px-10 flex flex-col gap-2 relative">
-              <p className="text-left">
+              <p className="text-center">
                 Total Tokens:{" "}
                 <span className="font-bold text-blue-400">
                   {filteredTokens.length}
@@ -609,7 +612,7 @@ export default function VaultPage() {
               </p>
             </div>
             <div className="px-10 flex flex-col gap-2">
-              <p className="text-left">
+              <p className="text-center">
                 Total Transactions:{" "}
                 <span className="font-bold text-purple-400">
                   {portfolio?.totalSwaps}
@@ -618,9 +621,9 @@ export default function VaultPage() {
             </div>
           </div>
         </div>
-        <div className="rounded-lg grid grid-cols-[1fr_1fr] gap-4">
-          <div className="bg-gray-900/60 p-8 px-10 flex flex-col gap-2 rounded-lg">
-            <div className="flex items-center gap-2 mb-2">
+        <div className="rounded-lg grid grid-cols-[1fr_1fr] gap-2">
+          <div className="bg-gray-900/60 backdrop-blur-lg border border-white/20 p-8 px-10 flex flex-col gap-2 rounded-lg">
+            <div className="flex items-center justify-center gap-2 mb-2">
               <Coins className="w-5 h-5 text-yellow-400" />
               <h1 className="text-2xl font-bold text-white">
                 Portfolio Allocation
@@ -636,8 +639,8 @@ export default function VaultPage() {
                       nameKey="name"
                       cx="50%"
                       cy="50%"
-                      innerRadius={80}
-                      outerRadius={120}
+                      innerRadius={100}
+                      outerRadius={150}
                       paddingAngle={2}
                       labelLine={false}
                     >
@@ -679,8 +682,8 @@ export default function VaultPage() {
               </div>
             </div>
           </div>
-          <div className="bg-gray-900/60 p-8 px-10 flex flex-col gap-2 rounded-lg">
-            <div className="flex items-center gap-2 mb-2">
+          <div className="bg-gray-900/60 backdrop-blur-lg border border-white/20 p-8 px-10 flex flex-col gap-2 rounded-lg">
+            <div className="flex items-center justify-center gap-2 mb-2">
               <ListOrdered className="w-5 h-5 text-purple-400" />
               <h1 className="text-2xl font-bold text-white">Tokens</h1>
             </div>
@@ -736,9 +739,9 @@ export default function VaultPage() {
         <div className="rounded-lg grid grid-cols-[1fr] gap-4">
           <div
             ref={perfTokenRef}
-            className="bg-gray-900/60 p-8 px-10 flex flex-col gap-2 rounded-lg"
+            className="bg-gray-900/60 backdrop-blur-lg border border-white/20 p-8 px-10 flex flex-col gap-2 rounded-lg"
           >
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center justify-center gap-2 mb-2">
               <TrendingUp className="w-5 h-5 text-blue-400" />
               <h1 className="text-2xl font-bold text-white">
                 Performance by Token

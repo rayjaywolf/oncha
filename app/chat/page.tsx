@@ -281,16 +281,9 @@ export default function ChatPage() {
               accept="image/png, image/jpeg, image/webp, image/heic, image/heif"
             />
             <div
-              className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center space-x-3;
+              className="absolute left-5 top-1/2 -translate-y-1/2 flex items-center space-x-3;
             |"
             >
-              <button
-                type="button"
-                className="text-gray-400 hover:text-white disabled:opacity-50"
-                disabled={isLoading}
-              >
-                <PlusCircle className="h-5 w-5" />
-              </button>
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
@@ -305,7 +298,7 @@ export default function ChatPage() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask about an image or analyze $ETH, a contract address..."
-              className="w-full bg-[#282828] border border-gray-700 rounded-full py-4 pl-20 pr-16 text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full bg-[#282828] border border-gray-700 rounded-full py-4 pl-13 pr-16 text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               disabled={isLoading}
             />
             <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center">
