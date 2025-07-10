@@ -78,10 +78,11 @@ export default function Home() {
             precise recommendations powered by advanced AI.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center mt-4 gap-4 w-full max-w-xs sm:max-w-none">
-            <Link href="/chat" passHref legacyBehavior>
-              <a className="bg-white text-black px-4 py-2 rounded-md font-regular w-full sm:w-auto text-center">
-                Get Started
-              </a>
+            <Link
+              href="/chat"
+              className="bg-white text-black px-4 py-2 rounded-md font-regular w-full sm:w-auto text-center"
+            >
+              Get Started
             </Link>
             <a
               href="#features"

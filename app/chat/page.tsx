@@ -49,7 +49,7 @@ export default function ChatPage() {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
-
+  ˀz;
   const handleMicClick = () => {
     if (!recognitionRef.current) return;
     if (isListening) {

@@ -45,10 +45,11 @@ export default function Header() {
             {/* <button className="bg-white/10 text-white px-4 py-2 rounded-full font-medium hover:bg-white/15 transition text-sm">
               Sign In
             </button> */}
-            <Link href="/chat" passHref legacyBehavior>
-              <a className="bg-white text-black px-4 py-2 rounded-full font-medium hover:bg-white/90 hover:text-black transition text-sm ">
-                Get Started
-              </a>
+            <Link
+              href="/chat"
+              className="bg-white text-black px-4 py-2 rounded-full font-medium hover:bg-white/90 hover:text-black transition text-sm "
+            >
+              Get Started
             </Link>
           </div>
           {/* Mobile Menu Icon Only */}
@@ -103,13 +104,12 @@ export default function Header() {
               >
                 Vault
               </a>
-              <Link href="/chat" passHref legacyBehavior>
-                <a
-                  className="mt-6 bg-white text-black px-4 py-2 rounded-full font-medium hover:bg-white/90 hover:text-black transition text-sm text-center"
-                  onClick={() => setSidebarOpen(false)}
-                >
-                  Get Started
-                </a>
+              <Link
+                href="/chat"
+                className="mt-6 bg-white text-black px-4 py-2 rounded-full font-medium hover:bg-white/90 hover:text-black transition text-sm text-center"
+                onClick={() => setSidebarOpen(false)}
+              >
+                Get Started
               </Link>
             </nav>
           </aside>
