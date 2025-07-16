@@ -6,6 +6,12 @@ import { MinusIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ * @param root0.containerClassName
+ */
 function InputOTP({
   className,
   containerClassName,
@@ -26,6 +32,11 @@ function InputOTP({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function InputOTPGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -36,6 +47,12 @@ function InputOTPGroup({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.index
+ * @param root0.className
+ */
 function InputOTPSlot({
   index,
   className,
@@ -66,6 +83,10 @@ function InputOTPSlot({
   )
 }
 
+/**
+ *
+ * @param root0
+ */
 function InputOTPSeparator({ ...props }: React.ComponentProps<"div">) {
   return (
     <div data-slot="input-otp-separator" role="separator" {...props}>

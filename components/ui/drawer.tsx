@@ -5,30 +5,51 @@ import { Drawer as DrawerPrimitive } from "vaul"
 
 import { cn } from "@/lib/utils"
 
+/**
+ *
+ * @param root0
+ */
 function Drawer({
   ...props
 }: React.ComponentProps<typeof DrawerPrimitive.Root>) {
   return <DrawerPrimitive.Root data-slot="drawer" {...props} />
 }
 
+/**
+ *
+ * @param root0
+ */
 function DrawerTrigger({
   ...props
 }: React.ComponentProps<typeof DrawerPrimitive.Trigger>) {
   return <DrawerPrimitive.Trigger data-slot="drawer-trigger" {...props} />
 }
 
+/**
+ *
+ * @param root0
+ */
 function DrawerPortal({
   ...props
 }: React.ComponentProps<typeof DrawerPrimitive.Portal>) {
   return <DrawerPrimitive.Portal data-slot="drawer-portal" {...props} />
 }
 
+/**
+ *
+ * @param root0
+ */
 function DrawerClose({
   ...props
 }: React.ComponentProps<typeof DrawerPrimitive.Close>) {
   return <DrawerPrimitive.Close data-slot="drawer-close" {...props} />
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function DrawerOverlay({
   className,
   ...props
@@ -45,6 +66,12 @@ function DrawerOverlay({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ * @param root0.children
+ */
 function DrawerContent({
   className,
   children,
@@ -72,6 +99,11 @@ function DrawerContent({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function DrawerHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -85,6 +117,11 @@ function DrawerHeader({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function DrawerFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -95,6 +132,11 @@ function DrawerFooter({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function DrawerTitle({
   className,
   ...props
@@ -108,6 +150,11 @@ function DrawerTitle({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function DrawerDescription({
   className,
   ...props

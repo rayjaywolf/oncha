@@ -6,6 +6,11 @@ import { CheckIcon, ChevronRightIcon, CircleIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function Menubar({
   className,
   ...props
@@ -22,24 +27,40 @@ function Menubar({
   )
 }
 
+/**
+ *
+ * @param root0
+ */
 function MenubarMenu({
   ...props
 }: React.ComponentProps<typeof MenubarPrimitive.Menu>) {
   return <MenubarPrimitive.Menu data-slot="menubar-menu" {...props} />
 }
 
+/**
+ *
+ * @param root0
+ */
 function MenubarGroup({
   ...props
 }: React.ComponentProps<typeof MenubarPrimitive.Group>) {
   return <MenubarPrimitive.Group data-slot="menubar-group" {...props} />
 }
 
+/**
+ *
+ * @param root0
+ */
 function MenubarPortal({
   ...props
 }: React.ComponentProps<typeof MenubarPrimitive.Portal>) {
   return <MenubarPrimitive.Portal data-slot="menubar-portal" {...props} />
 }
 
+/**
+ *
+ * @param root0
+ */
 function MenubarRadioGroup({
   ...props
 }: React.ComponentProps<typeof MenubarPrimitive.RadioGroup>) {
@@ -48,6 +69,11 @@ function MenubarRadioGroup({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function MenubarTrigger({
   className,
   ...props
@@ -64,6 +90,14 @@ function MenubarTrigger({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ * @param root0.align
+ * @param root0.alignOffset
+ * @param root0.sideOffset
+ */
 function MenubarContent({
   className,
   align = "start",
@@ -88,6 +122,13 @@ function MenubarContent({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ * @param root0.inset
+ * @param root0.variant
+ */
 function MenubarItem({
   className,
   inset,
@@ -111,6 +152,13 @@ function MenubarItem({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ * @param root0.children
+ * @param root0.checked
+ */
 function MenubarCheckboxItem({
   className,
   children,
@@ -137,6 +185,12 @@ function MenubarCheckboxItem({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ * @param root0.children
+ */
 function MenubarRadioItem({
   className,
   children,
@@ -161,6 +215,12 @@ function MenubarRadioItem({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ * @param root0.inset
+ */
 function MenubarLabel({
   className,
   inset,
@@ -181,6 +241,11 @@ function MenubarLabel({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function MenubarSeparator({
   className,
   ...props
@@ -194,6 +259,11 @@ function MenubarSeparator({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function MenubarShortcut({
   className,
   ...props
@@ -210,12 +280,23 @@ function MenubarShortcut({
   )
 }
 
+/**
+ *
+ * @param root0
+ */
 function MenubarSub({
   ...props
 }: React.ComponentProps<typeof MenubarPrimitive.Sub>) {
   return <MenubarPrimitive.Sub data-slot="menubar-sub" {...props} />
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ * @param root0.inset
+ * @param root0.children
+ */
 function MenubarSubTrigger({
   className,
   inset,
@@ -240,6 +321,11 @@ function MenubarSubTrigger({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function MenubarSubContent({
   className,
   ...props

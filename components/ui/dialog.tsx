@@ -6,30 +6,51 @@ import { XIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
+/**
+ *
+ * @param root0
+ */
 function Dialog({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Root>) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />
 }
 
+/**
+ *
+ * @param root0
+ */
 function DialogTrigger({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Trigger>) {
   return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />
 }
 
+/**
+ *
+ * @param root0
+ */
 function DialogPortal({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Portal>) {
   return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />
 }
 
+/**
+ *
+ * @param root0
+ */
 function DialogClose({
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Close>) {
   return <DialogPrimitive.Close data-slot="dialog-close" {...props} />
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function DialogOverlay({
   className,
   ...props
@@ -46,6 +67,13 @@ function DialogOverlay({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ * @param root0.children
+ * @param root0.showCloseButton
+ */
 function DialogContent({
   className,
   children,
@@ -80,6 +108,11 @@ function DialogContent({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -90,6 +123,11 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function DialogFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -103,6 +141,11 @@ function DialogFooter({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function DialogTitle({
   className,
   ...props
@@ -116,6 +159,11 @@ function DialogTitle({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function DialogDescription({
   className,
   ...props

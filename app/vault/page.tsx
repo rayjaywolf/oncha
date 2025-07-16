@@ -17,6 +17,7 @@ import {
   ListOrdered,
   ArrowUpRight,
   ArrowDownRight,
+  Copy,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -483,6 +484,9 @@ export default function VaultPage() {
     }
   }
 
+  // State for copy feedback
+  const [copied, setCopied] = useState(false);
+
   return (
     <div className="flex flex-col items-center pt-23 sm:pt-24 pb-6 sm:pb-10 relative overflow-hidden min-h-screen bg-[#10101a]">
       <div className="absolute inset-0 flex justify-center items-center blur-[120px] md:blur-[180px] z-0 pointer-events-none">
@@ -493,15 +497,38 @@ export default function VaultPage() {
           className="flex flex-col sm:grid sm:grid-cols-[7fr_1fr] gap-3 sm:gap-2 w-full rounded-lg py-2 sm:py-4"
           onSubmit={handleSubmit}
         >
-          <input
-            id="wallet"
-            name="wallet"
-            type="text"
-            placeholder="Enter wallet address"
-            className="px-4 py-3 sm:py-2 rounded-full bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
-            value={wallet}
-            onChange={(e) => setWallet(e.target.value)}
-          />
+          <div className="relative flex items-center">
+            <input
+              id="wallet"
+              name="wallet"
+              type="text"
+              placeholder="Enter wallet address"
+              className="px-4 py-3 sm:py-2 rounded-full bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base pr-10"
+              value={wallet}
+              onChange={(e) => setWallet(e.target.value)}
+            />
+            {/* Copy button */}
+            {wallet && (
+              <button
+                type="button"
+                aria-label="Copy wallet address"
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 text-white transition"
+                onClick={() => {
+                  navigator.clipboard.writeText(wallet);
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 1200);
+                }}
+              >
+                <Copy className="w-4 h-4" />
+              </button>
+            )}
+            {/* Copied feedback */}
+            {copied && (
+              <span className="absolute right-10 top-1/2 -translate-y-1/2 text-xs text-green-400 bg-gray-900/80 px-2 py-1 rounded shadow">
+                Copied!
+              </span>
+            )}
+          </div>
           <button
             type="submit"
             className="px-6 py-3 sm:py-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-semibold transition text-sm sm:text-base"

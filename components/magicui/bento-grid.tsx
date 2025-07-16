@@ -19,6 +19,12 @@ interface BentoCardProps extends ComponentPropsWithoutRef<"div"> {
   cta: string;
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.children
+ * @param root0.className
+ */
 const BentoGrid = ({ children, className, ...props }: BentoGridProps) => {
   return (
     <div
@@ -33,6 +39,17 @@ const BentoGrid = ({ children, className, ...props }: BentoGridProps) => {
   );
 };
 
+/**
+ *
+ * @param root0
+ * @param root0.name
+ * @param root0.className
+ * @param root0.background
+ * @param root0.Icon
+ * @param root0.description
+ * @param root0.href
+ * @param root0.cta
+ */
 const BentoCard = ({
   name,
   className,

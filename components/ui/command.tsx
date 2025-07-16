@@ -13,6 +13,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function Command({
   className,
   ...props
@@ -29,6 +34,15 @@ function Command({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.title
+ * @param root0.description
+ * @param root0.children
+ * @param root0.className
+ * @param root0.showCloseButton
+ */
 function CommandDialog({
   title = "Command Palette",
   description = "Search for a command to run...",
@@ -60,6 +74,11 @@ function CommandDialog({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function CommandInput({
   className,
   ...props
@@ -82,6 +101,11 @@ function CommandInput({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function CommandList({
   className,
   ...props
@@ -98,6 +122,10 @@ function CommandList({
   )
 }
 
+/**
+ *
+ * @param root0
+ */
 function CommandEmpty({
   ...props
 }: React.ComponentProps<typeof CommandPrimitive.Empty>) {
@@ -110,6 +138,11 @@ function CommandEmpty({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function CommandGroup({
   className,
   ...props
@@ -126,6 +159,11 @@ function CommandGroup({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function CommandSeparator({
   className,
   ...props
@@ -139,6 +177,11 @@ function CommandSeparator({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function CommandItem({
   className,
   ...props
@@ -155,6 +198,11 @@ function CommandItem({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function CommandShortcut({
   className,
   ...props

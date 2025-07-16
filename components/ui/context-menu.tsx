@@ -6,12 +6,20 @@ import { CheckIcon, ChevronRightIcon, CircleIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
+/**
+ *
+ * @param root0
+ */
 function ContextMenu({
   ...props
 }: React.ComponentProps<typeof ContextMenuPrimitive.Root>) {
   return <ContextMenuPrimitive.Root data-slot="context-menu" {...props} />
 }
 
+/**
+ *
+ * @param root0
+ */
 function ContextMenuTrigger({
   ...props
 }: React.ComponentProps<typeof ContextMenuPrimitive.Trigger>) {
@@ -20,6 +28,10 @@ function ContextMenuTrigger({
   )
 }
 
+/**
+ *
+ * @param root0
+ */
 function ContextMenuGroup({
   ...props
 }: React.ComponentProps<typeof ContextMenuPrimitive.Group>) {
@@ -28,6 +40,10 @@ function ContextMenuGroup({
   )
 }
 
+/**
+ *
+ * @param root0
+ */
 function ContextMenuPortal({
   ...props
 }: React.ComponentProps<typeof ContextMenuPrimitive.Portal>) {
@@ -36,12 +52,20 @@ function ContextMenuPortal({
   )
 }
 
+/**
+ *
+ * @param root0
+ */
 function ContextMenuSub({
   ...props
 }: React.ComponentProps<typeof ContextMenuPrimitive.Sub>) {
   return <ContextMenuPrimitive.Sub data-slot="context-menu-sub" {...props} />
 }
 
+/**
+ *
+ * @param root0
+ */
 function ContextMenuRadioGroup({
   ...props
 }: React.ComponentProps<typeof ContextMenuPrimitive.RadioGroup>) {
@@ -53,6 +77,13 @@ function ContextMenuRadioGroup({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ * @param root0.inset
+ * @param root0.children
+ */
 function ContextMenuSubTrigger({
   className,
   inset,
@@ -77,6 +108,11 @@ function ContextMenuSubTrigger({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function ContextMenuSubContent({
   className,
   ...props
@@ -93,6 +129,11 @@ function ContextMenuSubContent({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function ContextMenuContent({
   className,
   ...props
@@ -111,6 +152,13 @@ function ContextMenuContent({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ * @param root0.inset
+ * @param root0.variant
+ */
 function ContextMenuItem({
   className,
   inset,
@@ -134,6 +182,13 @@ function ContextMenuItem({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ * @param root0.children
+ * @param root0.checked
+ */
 function ContextMenuCheckboxItem({
   className,
   children,
@@ -160,6 +215,12 @@ function ContextMenuCheckboxItem({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ * @param root0.children
+ */
 function ContextMenuRadioItem({
   className,
   children,
@@ -184,6 +245,12 @@ function ContextMenuRadioItem({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ * @param root0.inset
+ */
 function ContextMenuLabel({
   className,
   inset,
@@ -204,6 +271,11 @@ function ContextMenuLabel({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function ContextMenuSeparator({
   className,
   ...props
@@ -217,6 +289,11 @@ function ContextMenuSeparator({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function ContextMenuShortcut({
   className,
   ...props

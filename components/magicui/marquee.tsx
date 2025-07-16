@@ -32,6 +32,16 @@ interface MarqueeProps extends ComponentPropsWithoutRef<"div"> {
   repeat?: number;
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ * @param root0.reverse
+ * @param root0.pauseOnHover
+ * @param root0.children
+ * @param root0.vertical
+ * @param root0.repeat
+ */
 export function Marquee({
   className,
   reverse = false,

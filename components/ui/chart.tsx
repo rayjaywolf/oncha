@@ -24,6 +24,9 @@ type ChartContextProps = {
 
 const ChartContext = React.createContext<ChartContextProps | null>(null)
 
+/**
+ *
+ */
 function useChart() {
   const context = React.useContext(ChartContext)
 
@@ -34,6 +37,14 @@ function useChart() {
   return context
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.id
+ * @param root0.className
+ * @param root0.children
+ * @param root0.config
+ */
 function ChartContainer({
   id,
   className,
@@ -69,6 +80,12 @@ function ChartContainer({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.id
+ * @param root0.config
+ */
 const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
   const colorConfig = Object.entries(config).filter(
     ([, config]) => config.theme || config.color
@@ -104,6 +121,23 @@ ${colorConfig
 
 const ChartTooltip = RechartsPrimitive.Tooltip
 
+/**
+ *
+ * @param root0
+ * @param root0.active
+ * @param root0.payload
+ * @param root0.className
+ * @param root0.indicator
+ * @param root0.hideLabel
+ * @param root0.hideIndicator
+ * @param root0.label
+ * @param root0.labelFormatter
+ * @param root0.labelClassName
+ * @param root0.formatter
+ * @param root0.color
+ * @param root0.nameKey
+ * @param root0.labelKey
+ */
 function ChartTooltipContent({
   active,
   payload,
@@ -250,6 +284,15 @@ function ChartTooltipContent({
 
 const ChartLegend = RechartsPrimitive.Legend
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ * @param root0.hideIcon
+ * @param root0.payload
+ * @param root0.verticalAlign
+ * @param root0.nameKey
+ */
 function ChartLegendContent({
   className,
   hideIcon = false,
@@ -305,6 +348,12 @@ function ChartLegendContent({
 }
 
 // Helper to extract item config from a payload.
+/**
+ *
+ * @param config
+ * @param payload
+ * @param key
+ */
 function getPayloadConfigFromPayload(
   config: ChartConfig,
   payload: unknown,

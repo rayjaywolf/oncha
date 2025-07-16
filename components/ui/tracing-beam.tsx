@@ -9,6 +9,12 @@ import {
 } from "motion/react";
 import { cn } from "@/lib/utils";
 
+/**
+ *
+ * @param root0
+ * @param root0.children
+ * @param root0.className
+ */
 export const TracingBeam = ({
   children,
   className,

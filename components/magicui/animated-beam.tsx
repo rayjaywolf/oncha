@@ -25,6 +25,27 @@ export interface AnimatedBeamProps {
   endYOffset?: number;
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ * @param root0.containerRef
+ * @param root0.fromRef
+ * @param root0.toRef
+ * @param root0.curvature
+ * @param root0.reverse
+ * @param root0.duration
+ * @param root0.delay
+ * @param root0.pathColor
+ * @param root0.pathWidth
+ * @param root0.pathOpacity
+ * @param root0.gradientStartColor
+ * @param root0.gradientStopColor
+ * @param root0.startXOffset
+ * @param root0.startYOffset
+ * @param root0.endXOffset
+ * @param root0.endYOffset
+ */
 export const AnimatedBeam: React.FC<AnimatedBeamProps> = ({
   className,
   containerRef,
@@ -64,6 +85,9 @@ export const AnimatedBeam: React.FC<AnimatedBeamProps> = ({
       };
 
   useEffect(() => {
+    /**
+     *
+     */
     const updatePath = () => {
       if (containerRef.current && fromRef.current && toRef.current) {
         const containerRect = containerRef.current.getBoundingClientRect();

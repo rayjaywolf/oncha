@@ -5,6 +5,13 @@ import { ChevronDownIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ * @param root0.children
+ * @param root0.viewport
+ */
 function NavigationMenu({
   className,
   children,
@@ -29,6 +36,11 @@ function NavigationMenu({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function NavigationMenuList({
   className,
   ...props
@@ -45,6 +57,11 @@ function NavigationMenuList({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function NavigationMenuItem({
   className,
   ...props
@@ -62,6 +79,12 @@ const navigationMenuTriggerStyle = cva(
   "group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground disabled:pointer-events-none disabled:opacity-50 data-[state=open]:hover:bg-accent data-[state=open]:text-accent-foreground data-[state=open]:focus:bg-accent data-[state=open]:bg-accent/50 focus-visible:ring-ring/50 outline-none transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1"
 )
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ * @param root0.children
+ */
 function NavigationMenuTrigger({
   className,
   children,
@@ -82,6 +105,11 @@ function NavigationMenuTrigger({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function NavigationMenuContent({
   className,
   ...props
@@ -99,6 +127,11 @@ function NavigationMenuContent({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function NavigationMenuViewport({
   className,
   ...props
@@ -121,6 +154,11 @@ function NavigationMenuViewport({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function NavigationMenuLink({
   className,
   ...props
@@ -137,6 +175,11 @@ function NavigationMenuLink({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function NavigationMenuIndicator({
   className,
   ...props

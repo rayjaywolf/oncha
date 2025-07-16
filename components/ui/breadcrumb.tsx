@@ -4,10 +4,19 @@ import { ChevronRight, MoreHorizontal } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
+/**
+ *
+ * @param root0
+ */
 function Breadcrumb({ ...props }: React.ComponentProps<"nav">) {
   return <nav aria-label="breadcrumb" data-slot="breadcrumb" {...props} />
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function BreadcrumbList({ className, ...props }: React.ComponentProps<"ol">) {
   return (
     <ol
@@ -21,6 +30,11 @@ function BreadcrumbList({ className, ...props }: React.ComponentProps<"ol">) {
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function BreadcrumbItem({ className, ...props }: React.ComponentProps<"li">) {
   return (
     <li
@@ -31,6 +45,12 @@ function BreadcrumbItem({ className, ...props }: React.ComponentProps<"li">) {
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.asChild
+ * @param root0.className
+ */
 function BreadcrumbLink({
   asChild,
   className,
@@ -49,6 +69,11 @@ function BreadcrumbLink({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function BreadcrumbPage({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
@@ -62,6 +87,12 @@ function BreadcrumbPage({ className, ...props }: React.ComponentProps<"span">) {
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.children
+ * @param root0.className
+ */
 function BreadcrumbSeparator({
   children,
   className,
@@ -80,6 +111,11 @@ function BreadcrumbSeparator({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function BreadcrumbEllipsis({
   className,
   ...props

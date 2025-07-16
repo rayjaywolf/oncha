@@ -8,6 +8,11 @@ import {
 import { cn } from "@/lib/utils"
 import { Button, buttonVariants } from "@/components/ui/button"
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
   return (
     <nav
@@ -20,6 +25,11 @@ function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function PaginationContent({
   className,
   ...props
@@ -33,6 +43,10 @@ function PaginationContent({
   )
 }
 
+/**
+ *
+ * @param root0
+ */
 function PaginationItem({ ...props }: React.ComponentProps<"li">) {
   return <li data-slot="pagination-item" {...props} />
 }
@@ -42,6 +56,13 @@ type PaginationLinkProps = {
 } & Pick<React.ComponentProps<typeof Button>, "size"> &
   React.ComponentProps<"a">
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ * @param root0.isActive
+ * @param root0.size
+ */
 function PaginationLink({
   className,
   isActive,
@@ -65,6 +86,11 @@ function PaginationLink({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function PaginationPrevious({
   className,
   ...props
@@ -82,6 +108,11 @@ function PaginationPrevious({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function PaginationNext({
   className,
   ...props
@@ -99,6 +130,11 @@ function PaginationNext({
   )
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function PaginationEllipsis({
   className,
   ...props

@@ -6,6 +6,11 @@ import * as ResizablePrimitive from "react-resizable-panels"
 
 import { cn } from "@/lib/utils"
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ */
 function ResizablePanelGroup({
   className,
   ...props
@@ -22,12 +27,22 @@ function ResizablePanelGroup({
   )
 }
 
+/**
+ *
+ * @param root0
+ */
 function ResizablePanel({
   ...props
 }: React.ComponentProps<typeof ResizablePrimitive.Panel>) {
   return <ResizablePrimitive.Panel data-slot="resizable-panel" {...props} />
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.withHandle
+ * @param root0.className
+ */
 function ResizableHandle({
   withHandle,
   className,

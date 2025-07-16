@@ -5,6 +5,15 @@ import * as SliderPrimitive from "@radix-ui/react-slider"
 
 import { cn } from "@/lib/utils"
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ * @param root0.defaultValue
+ * @param root0.value
+ * @param root0.min
+ * @param root0.max
+ */
 function Slider({
   className,
   defaultValue,

@@ -7,6 +7,13 @@ export interface AnimatedShinyTextProps
   shimmerWidth?: number;
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.children
+ * @param root0.className
+ * @param root0.shimmerWidth
+ */
 export const AnimatedShinyText: FC<AnimatedShinyTextProps> = ({
   children,
   className,

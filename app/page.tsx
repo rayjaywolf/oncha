@@ -372,7 +372,7 @@ export default function Home() {
             updates, and community discussions.
           </p>
           <AvatarCircles numPeople={99} avatarUrls={avatars} className="z-10" />
-          <div className="flex flex-col sm:flex-row items-center mt-4 gap-2 z-10 w-full max-w-xs sm:max-w-none">
+          <div className="flex flex-col sm:flex-row items-center justify-center mt-4 gap-2 z-10 w-full max-w-xs sm:max-w-none">
             <button className="bg-white text-black px-4 py-2 rounded-full font-regular flex items-center gap-2 w-full sm:w-auto">
               Telegram <ArrowRight className="inline w-4 h-4" />
             </button>

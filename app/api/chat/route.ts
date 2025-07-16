@@ -101,6 +101,10 @@ You MUST respond with ONLY a JSON object in the following structure.
   "fundamentalSummary": "A seamless analysis of the current fundamental landscape. Integrate recent events, market sentiment, and project updates into a coherent narrative that explains the 'why' behind the price action. Write from a position of authority."
 }}`;
 
+/**
+ *
+ * @param query
+ */
 async function performWebSearchWithTavily(query: string): Promise<string | null> {
     try {
         // Check if API key exists
@@ -199,6 +203,10 @@ const axiosInstance = axios.create({ timeout: 10000 });
 axiosRetry(axiosInstance, {
   retries: 3,
   retryDelay: axiosRetry.exponentialDelay,
+  /**
+   *
+   * @param error
+   */
   retryCondition: (error) => {
     return (
       axiosRetry.isNetworkOrIdempotentRequestError(error) ||
@@ -207,6 +215,10 @@ axiosRetry(axiosInstance, {
   },
 });
 
+/**
+ *
+ * @param coinId
+ */
 async function fetchCoinGeckoPrice(coinId: string): Promise<CoinData | null> {
   try {
     const searchUrl = `${COINGECKO_API_BASE}/search?query=${coinId}`;
@@ -224,6 +236,11 @@ async function fetchCoinGeckoPrice(coinId: string): Promise<CoinData | null> {
   }
 }
 
+/**
+ *
+ * @param chain
+ * @param pairAddress
+ */
 async function fetchDexScreenerDataByPair(chain: string, pairAddress: string): Promise<CoinData | null> {
     try {
         const url = `${DEXSCREENER_API_BASE}/pairs/${chain}/${pairAddress}`;
@@ -237,6 +254,10 @@ async function fetchDexScreenerDataByPair(chain: string, pairAddress: string): P
     }
 }
 
+/**
+ *
+ * @param address
+ */
 async function fetchDexScreenerDataByContract(address: string): Promise<CoinData | null> {
     try {
         const url = `${DEXSCREENER_API_BASE}/search?q=${address}`;
@@ -250,6 +271,10 @@ async function fetchDexScreenerDataByContract(address: string): Promise<CoinData
     }
 }
 
+/**
+ *
+ * @param userInput
+ */
 async function getCoinData(userInput: string): Promise<CoinData | null> {
   const trimmedInput = userInput.trim();
   if (!trimmedInput) return null;
@@ -273,6 +298,11 @@ async function getCoinData(userInput: string): Promise<CoinData | null> {
   return null;
 }
 
+/**
+ *
+ * @param analysis
+ * @param coin
+ */
 function formatFinancialAnalysisToHtml(analysis: FinancialAnalysisData, coin: CoinData): string {
     const window = new JSDOM('').window;
     const purify = DOMPurify(window);
@@ -285,6 +315,10 @@ function formatFinancialAnalysisToHtml(analysis: FinancialAnalysisData, coin: Co
     const changeString = priceParts && priceParts[2] ? priceParts[2] : (coin.change24h ? `(${(coin.change24h >= 0 ? '+' : '') + coin.change24h.toFixed(2)}%)` : '');
     const priceChangeColor = changeString.includes('+') ? 'text-emerald-400' : 'text-rose-400';
     const coinImageHtml = coin.imageUrl ? `<img src="${coin.imageUrl}" alt="${coin.symbol}" class="w-12 h-12 rounded-full ring-2 ring-blue-500/30" />` : `<div class="w-12 h-12 bg-gradient-to-br from-blue-600/20 to-purple-600/20 rounded-full flex items-center justify-center text-lg font-bold text-blue-300 ring-2 ring-blue-500/30">${coin.symbol}</div>`;
+    /**
+     *
+     * @param summary
+     */
     const formatSummary = (summary: string) => summary.split('\n').filter(p => p.trim() !== '').map(p => `<p>${p}</p>`).join('');
 
     const unsafeHtml = `
@@ -348,6 +382,10 @@ function formatFinancialAnalysisToHtml(analysis: FinancialAnalysisData, coin: Co
     return purify.sanitize(unsafeHtml);
 }
 
+/**
+ *
+ * @param content
+ */
 function formatGeneralResponseToHtml(content: string): string {
     const window = new JSDOM('').window;
     const purify = DOMPurify(window);
@@ -357,6 +395,10 @@ function formatGeneralResponseToHtml(content: string): string {
 
 const messageSchema = z.array(z.object({ role: z.enum(["user", "assistant"]), content: z.string(), imageUrl: z.string().optional(), }));
 
+/**
+ *
+ * @param rawContent
+ */
 function parseJsonLlmResponse<T>(rawContent: string): T | null {
     try {
         const cleanJsonString = rawContent.replace(/```json/g, "").replace(/```/g, "").trim();
@@ -367,6 +409,10 @@ function parseJsonLlmResponse<T>(rawContent: string): T | null {
     }
 }
 
+/**
+ *
+ * @param req
+ */
 export async function POST(req: Request) {
   try {
     const formData = await req.formData();

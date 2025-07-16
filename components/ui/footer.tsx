@@ -2,6 +2,9 @@ import React from "react";
 import Link from "next/link";
 import { Github, Twitter, Linkedin } from "lucide-react";
 
+/**
+ *
+ */
 export default function Footer() {
   return (
     <footer className="w-full bg-[#01010e]/60 backdrop-blur-md border-t border-white/10">
@@ -27,6 +30,15 @@ export default function Footer() {
                 className="text-white/70 hover:text-white transition"
               >
                 <Github className="w-5 h-5" />
+              </Link>
+              {/* LinkedIn */}
+              <Link
+                href="https://linkedin.com/in/your-linkedin" // TODO: Replace with real link
+                className="text-white/70 hover:text-white transition"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Linkedin className="w-5 h-5" />
               </Link>
             </div>
           </div>
@@ -62,6 +74,21 @@ export default function Footer() {
                   className="text-white/70 hover:text-white transition text-xs sm:text-sm"
                 >
                   Trading Signals
+                </Link>
+                {/* Contact & Feedback */}
+                <Link
+                  href="mailto:contact@oncha.com"
+                  className="text-white/70 hover:text-white transition text-xs sm:text-sm mt-2"
+                >
+                  Contact
+                </Link>
+                <Link
+                  href="https://forms.gle/your-feedback-form" // TODO: Replace with real link
+                  className="text-white/70 hover:text-white transition text-xs sm:text-sm"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Feedback
                 </Link>
               </div>
               {/* Resources */}

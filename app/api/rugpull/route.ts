@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
+/**
+ *
+ * @param req
+ */
 export async function POST(req: NextRequest) {
   try {
     const { tokenAddress } = await req.json();

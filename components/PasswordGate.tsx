@@ -5,6 +5,11 @@ import React, { useState, useEffect } from "react";
 const PASSWORD = "oncha123";
 const STORAGE_KEY = "site_authenticated";
 
+/**
+ *
+ * @param root0
+ * @param root0.children
+ */
 export default function PasswordGate({
   children,
 }: {
@@ -21,6 +26,10 @@ export default function PasswordGate({
     }
   }, []);
 
+  /**
+   *
+   * @param e
+   */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (input === PASSWORD) {

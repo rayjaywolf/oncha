@@ -9,6 +9,7 @@ import {
   Wind,
   Loader,
   X,
+  Loader2,
 } from "lucide-react";
 
 interface Message {
@@ -29,6 +30,8 @@ export default function ChatPage() {
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  // Add loading state for chat
+  const [loading, setLoading] = useState(false);
 
   const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
     if (chatContainerRef.current) {
@@ -49,7 +52,6 @@ export default function ChatPage() {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
-  ˀz;
   const handleMicClick = () => {
     if (!recognitionRef.current) return;
     if (isListening) {
@@ -183,7 +185,12 @@ export default function ChatPage() {
   return (
     <div className="bg-[#01010e] min-h-screen w-full flex flex-col font-sans text-gray-300">
       <div className="flex-grow flex flex-col w-full max-w-5xl mx-auto mt-8 sm:mt-20 px-2 sm:px-0">
-        {messages.length === 0 ? (
+        {loading ? (
+          <div className="flex-grow flex flex-col items-center justify-center text-center px-2 animate-pulse">
+            <Loader2 className="animate-spin text-blue-400 h-8 w-8 mb-4" />
+            <p className="text-lg text-blue-300">Analyzing market data...</p>
+          </div>
+        ) : messages.length === 0 ? (
           <div className="flex-grow flex flex-col items-center justify-center text-center px-2">
             <div className="bg-white p-3 rounded-xl shadow-lg mb-6">
               <Wind className="text-[#121212] h-8 w-8" />

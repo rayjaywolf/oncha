@@ -28,6 +28,13 @@ const toggleVariants = cva(
   }
 )
 
+/**
+ *
+ * @param root0
+ * @param root0.className
+ * @param root0.variant
+ * @param root0.size
+ */
 function Toggle({
   className,
   variant,

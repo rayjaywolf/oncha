@@ -1,11 +1,37 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState } from "react";
-import { Menu } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Menu, Sun, Moon } from "lucide-react";
 
 export default function Header() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [theme, setTheme] = useState<"light" | "dark">(() => {
+    if (typeof window !== "undefined") {
+      return (localStorage.getItem("theme") as "light" | "dark") || "dark";
+    }
+    return "dark";
+  });
+
+  // Apply theme to html root
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const root = window.document.documentElement;
+      if (theme === "dark") {
+        root.classList.add("dark");
+        localStorage.setItem("theme", "dark");
+      } else {
+        root.classList.remove("dark");
+        localStorage.setItem("theme", "light");
+      }
+    }
+  }, [theme]);
+
+  // Toggle theme handler
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+  };
+
   return (
     <>
       <header className="fixed top-5 left-1/2 -translate-x-1/2 w-[95vw] sm:w-[60%] mx-auto z-50 bg-[#fff]/5 backdrop-blur-md border border-white/10 rounded-full">
@@ -42,6 +68,19 @@ export default function Header() {
           </nav>
           {/* Desktop Buttons */}
           <div className="hidden md:flex items-center gap-2">
+            {/* Theme Toggle */}
+            <button
+              aria-label="Toggle dark mode"
+              onClick={toggleTheme}
+              className="p-2 rounded-full border border-white/10 bg-white/10 hover:bg-white/20 transition text-white flex items-center justify-center"
+              style={{ minWidth: 36, minHeight: 36 }}
+            >
+              {theme === "dark" ? (
+                <Sun className="w-5 h-5" />
+              ) : (
+                <Moon className="w-5 h-5" />
+              )}
+            </button>
             {/* <button className="bg-white/10 text-white px-4 py-2 rounded-full font-medium hover:bg-white/15 transition text-sm">
               Sign In
             </button> */}
@@ -59,6 +98,19 @@ export default function Header() {
             onClick={() => setSidebarOpen(true)}
           >
             <Menu className="w-6 h-6 text-white" />
+          </button>
+          {/* Mobile Theme Toggle */}
+          <button
+            aria-label="Toggle dark mode"
+            onClick={toggleTheme}
+            className="md:hidden ml-2 p-2 rounded-full border border-white/10 bg-white/10 hover:bg-white/20 transition text-white flex items-center justify-center"
+            style={{ minWidth: 36, minHeight: 36 }}
+          >
+            {theme === "dark" ? (
+              <Sun className="w-5 h-5" />
+            ) : (
+              <Moon className="w-5 h-5" />
+            )}
           </button>
         </div>
       </header>

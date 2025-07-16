@@ -12,6 +12,13 @@ interface AvatarCirclesProps {
   avatarUrls: Avatar[];
 }
 
+/**
+ *
+ * @param root0
+ * @param root0.numPeople
+ * @param root0.className
+ * @param root0.avatarUrls
+ */
 export const AvatarCircles = ({
   numPeople,
   className,
